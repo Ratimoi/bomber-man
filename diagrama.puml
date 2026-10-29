@@ -1,0 +1,259 @@
+@startuml diagrama_bomberman
+title Diagrama Bomber Man
+skinparam ClassAttributeIconSize 0
+
+abstract class ElementoMapa {
+    # posicao : Posicao
+
+    + getPosicao() : Posicao
+    + setPosicao(p: Posicao) : void
+    + getSimbolo() : char
+}
+
+abstract class Personagem {
+    # vivo : boolean
+
+    + mover(tab:Tabuleiro) : void
+    + receberDano(tab:Tabuleiro) : void
+    + isDestruido() : boolean
+}
+
+abstract class Inimigo {
+    # velocidade : int
+    # pontos : int
+
+    + decidirMovimento(tab:Tabuleiro, j:Jogador) : void
+    + agir(tab:Tabuleiro, j:Jogador) : void
+}
+
+class InimigoSabotador {
+    + decidirMovimento(tab:Tabuleiro, j:Jogador) : void
+    + procurarBomba(tab:Tabuleiro) : Bomba
+    + desarmar() : BombaArmadilha
+    + getSimbolo() : char
+}
+
+class InimigoComum {
+    + decidirMovimento(tab:Tabuleiro, j:Jogador) : void
+    + getSimbolo() : char
+}
+
+class InimigoRastreador {
+    - perseguindo : boolean
+
+    + decidirMovimento(tab:Tabuleiro, j:Jogador) : void
+    + getSimbolo() : char
+}
+
+class Protagonista {
+    - nome : String
+    - vidas : int
+    - maxBombas : int
+    - bombasAtivas : int
+    - raioExplosao : int
+    - pontuacao : int
+
+    + plantarBomba() : Bomba
+    + aumentarRaio() : void
+    + aumentarMaxBombas() : void
+    + perderVida() : void
+    + getSimbolo() : char
+}
+
+abstract class Item {
+    # visivel : boolean
+
+    + revelar() : void
+    + coletar(j:Jogador, jogo:Jogo) : void
+}
+
+class PortaSaida {
+    - aberta : boolean
+
+    + abrir() : void
+    + coletar(j:Jogador, jogo:Jogo) : void
+    + getSimbolo() : char
+}
+
+abstract class PowerUp {
+    + aplicar(j:Jogador) : void
+}
+
+class PowerUpRaio {
+    + aplicar(j:Jogador) : void
+    + getSimbolo() : char
+}
+
+class PowerUpBomba {
+    + aplicar(j:Jogador) : void
+    + getSimbolo() : char
+}
+
+abstract class Bloco {
+    # transponivel : boolean
+
+    + isTransponivel() : boolean
+}
+
+class BlocoDestrutivo {
+    + receberDano(tab:Tabuleiro) : void
+    + isDestruido() : boolean
+    + getSimbolo() : char
+}
+
+class BlocoIndestrutivo {
+    + getSimbolo() : char
+}
+
+class Bomba {
+    - tempoTotal : int
+    - tempoRestante : int
+    - raio : int
+
+    + explodir(tab:Tabuleiro) : Explosao
+    + getSimbolo() : char
+}
+
+class BombaArmadilha {
+    - disfarce : Bloco
+
+    + detonar(tab:Tabuleiro) : Explosao
+    + getSimbolo() : char
+}
+
+class Explosao {
+    - origem : Posicao
+    - raio : int
+    - celulasAtingidas : ArrayList<Posicao>
+
+    + propagar(tab:Tabuleiro) : void
+    + atinge(p:Posicao) : boolean
+}
+
+class Tabuleiro {
+    - celulas : Celula[ ][ ]
+    - tamanho : int
+
+    + imprimir() : void
+    + getCelula(p:Posicao) : Celula
+    + posicaoValida(p:Posicao) : boolean
+    + isLivre() : boolean
+}
+
+class Celula {
+    - posicao : Posicao
+    - bloco : Bloco
+    - item: Item
+    - bomba : Bomba
+
+    + isTransponivel() : boolean
+    + getSimbolo() : char
+    + removerBloco() : void
+}
+
+class Posicao {
+    - linha : int
+    - coluna : int
+
+    + getLinha(): int
+    + getColuna(): int
+}
+
+class Jogo {
+    - tabuleiro : Tabuleiro
+    - protagonista : Protagonista
+    - inimigos : ArrayList<Inimigo>
+    - bombas : ArrayList<Bomba>
+    - turno : int
+
+    + iniciar() : void
+    + processarTurno(cmd:char) : void
+    + moverJogador() : void
+    + moverInimigos() : void
+    + verificarFimJogo() : boolean
+    + reiniciarFase() : void
+    + atualizarBombas() : void
+    + esperar() : void
+}
+
+package "Exeções" {
+    exception Exception {
+
+    }
+
+    exception JogoException {
+        + JogoException(msg: String)
+    }
+
+    exception MovimentoInvalidoException {
+
+    }
+
+    exception LimiteBombaException {
+
+    }
+}
+
+package "Interfaces" {
+    interface I_Destrutivel {
+        + receberDano(tab:Tabuleiro) : void
+        + isDestruido() : boolean
+    }
+
+    interface I_Movel {
+        + mover(tab:Tabuleiro) : void
+    }
+}
+
+ElementoMapa <|-- Item
+ElementoMapa <|-- Personagem
+ElementoMapa <|-- Bloco
+ElementoMapa <|-- Bomba
+
+Personagem <|-- Inimigo
+Personagem <|-- Protagonista
+
+Protagonista <-- Bomba
+
+Inimigo <|-- InimigoComum
+Inimigo <|-- InimigoRastreador
+Inimigo <|-- InimigoSabotador
+
+Explosao <-- Bomba
+
+Bomba <|-- BombaArmadilha
+
+Bloco <|-- BlocoDestrutivo
+Bloco <|-- BlocoIndestrutivo
+
+Item <|-- PowerUp
+Item <|-- PortaSaida
+
+BlocoDestrutivo <|-- Item
+
+PowerUp <|-- PowerUpBomba
+PowerUp <|-- PowerUpRaio
+
+Exception <|-- JogoException
+
+JogoException <|-- MovimentoInvalidoException
+JogoException <|-- LimiteBombaException
+
+Tabuleiro *-- Celula
+
+Celula *-- Posicao
+Celula o-- Bloco
+Celula o-- Item
+
+I_Destrutivel <|-- Personagem
+I_Destrutivel <|-- BlocoDestrutivo
+
+I_Movel <|-- Personagem
+
+Jogo o-- Bomba
+Jogo *-- Tabuleiro
+Jogo *-- Protagonista
+Jogo o-- Inimigo
+Jogo ..> JogoException : throws
+
+@enduml
