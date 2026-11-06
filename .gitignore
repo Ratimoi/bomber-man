@@ -1,0 +1,15 @@
+   @"
+   # Compilados
+   *.class
+   bin/
+   out/
+
+   # IDEs
+   .idea/
+   *.iml
+   .vscode/
+
+   # Dados gerados ao jogar
+   saves/
+   ranking.txt
+   "@ | Out-File -Encoding utf8 .gitignore

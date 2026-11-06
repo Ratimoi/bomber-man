@@ -1,0 +1,438 @@
+@startuml diagrama_bomberman
+title Diagrama de Classes - Bomberman
+skinparam ClassAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+hide empty members 
+set separator none
+
+class Main {
+    + {static} main(args: String[]): void
+}
+
+package excecoes {
+    exception ArquivoException
+
+    exception JogoException {
+        + JogoException(msg: String)
+    }
+
+    exception LimiteBombaException
+
+    exception LimiteDicaException
+
+    exception MovimentoInvalidoException
+}
+
+package gui {
+    class JanelaPrincipal {
+        - painelJogo: PainelJogo
+        - painelMenu: PainelMenu
+
+        + mostrarFimDeJogo(venceu: boolean): void
+        + mostrarJogo(j: Jogo): void
+        + mostrarMenu(): void
+    }
+
+    class PainelJogo {
+        - jogo: Jogo
+
+        + paintComponent(g: Graphics): void
+    }
+
+    class PainelMenu {
+        + onCarregar(): void
+        + onJogar(): void
+        + onRanking(): void
+        + onSair(): void
+    }
+}
+
+package interfaces {
+    interface IDestrutivel {
+        + isDestruido(): boolean
+        + receberDano(tab: Tabuleiro): void
+    }
+
+    interface IMovel {
+        + mover(dir: Direcao, tab: Tabuleiro): void
+    }
+
+    interface ITemporizavel {
+        + getTempoRestante(): int
+        + tick(): void
+    }
+}
+
+package java.lang {
+    interface Comparable<RegistroRanking>
+
+    exception Exception
+
+    interface Runnable
+}
+
+package javax.swing {
+    class JFrame
+
+    class JPanel
+}
+
+package modelo {
+    abstract class Bloco {
+        # transponivel: boolean
+
+        + isTransponivel(): boolean
+    }
+
+    class BlocoDestrutivo {
+        - itemOculto: Item
+
+        + getSimbolo(): char
+        + isDestruido(): boolean
+        + receberDano(tab: Tabuleiro): void
+    }
+
+    class BlocoIndestrutivo {
+        + getSimbolo(): char
+    }
+
+    class Bomba {
+        - dono: Jogador
+        - jogo: Jogo
+        - raio: int
+        - tempoRestante: int
+        - tempoTotal: int
+
+        + explodir(tab: Tabuleiro): Explosao
+        + getSimbolo(): char
+        + getTempoRestante(): int
+        + naMetadeInicial(): boolean
+        + run(): void
+        + tick(): void
+    }
+
+    class BombaArmadilha {
+        - disfarce: Bloco
+
+        + detonar(tab: Tabuleiro): Explosao
+        + getSimbolo(): char
+    }
+
+    class Celula {
+        - bloco: Bloco
+        - bomba: Bomba
+        - item: Item
+        - posicao: Posicao
+
+        + getSimbolo(): char
+        + isTransponivel(): boolean
+        + removerBloco(): void
+    }
+
+    enum Dificuldade {
+        FACIL
+        MEDIO
+        DIFICIL
+        - arquivoMapa: String
+        - quantidadeInimigos: int
+
+        + temSabotador(): boolean
+    }
+
+    enum Direcao {
+        NORTE
+        SUL
+        LESTE
+        OESTE
+        - dColuna: int
+        - dLinha: int
+
+        + getDColuna(): int
+        + getDLinha(): int
+    }
+
+    abstract class ElementoMapa {
+        # posicao: Posicao
+
+        + getPosicao(): Posicao
+        + {abstract} getSimbolo(): char
+        + setPosicao(p: Posicao): void
+    }
+
+    enum EstadoJogo {
+        EM_ANDAMENTO
+        VITORIA
+        DERROTA
+    }
+
+    class Explosao {
+        - celulasAtingidas: ArrayList<Posicao>
+        - origem: Posicao
+        - raio: int
+
+        + atinge(p: Posicao): boolean
+        + propagar(tab: Tabuleiro): void
+    }
+
+    abstract class Inimigo {
+        # jogo: Jogo
+        # pontos: int
+        # velocidade: int
+
+        + agir(tab: Tabuleiro, j: Jogador): void
+        + {abstract} decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+        + run(): void
+    }
+
+    class InimigoComum {
+        + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+        + getSimbolo(): char
+    }
+
+    class InimigoRastreador {
+        - perseguindo: boolean
+
+        + avistarJogador(tab: Tabuleiro, j: Jogador): boolean
+        + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+        + getSimbolo(): char
+    }
+
+    class InimigoSabotador {
+        + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+        + desarmar(b: Bomba): BombaArmadilha
+        + getSimbolo(): char
+        + procurarBomba(tab: Tabuleiro): Bomba
+    }
+
+    abstract class Item {
+        # visivel: boolean
+
+        + {abstract} coletar(j: Jogador, jogo: Jogo): void
+        + revelar(): void
+    }
+
+    class Jogador {
+        - bombasAtivas: int
+        - maxBombas: int
+        - nome: String
+        - pontuacao: int
+        - raioExplosao: int
+        - vidas: int
+
+        + aumentarMaxBombas(): void
+        + aumentarRaio(): void
+        + getSimbolo(): char
+        + liberarBomba(): void
+        + perderVida(): void
+        + plantarBomba(): Bomba
+    }
+
+    class Jogo {
+        - bombas: ArrayList<Bomba>
+        - dicasRestantes: int
+        - dificuldade: Dificuldade
+        - estado: EstadoJogo
+        - inimigos: ArrayList<Inimigo>
+        - jogador: Jogador
+        - modoDebug: boolean
+        - tabuleiro: Tabuleiro
+        - turno: int
+
+        + alternarDebug(): void
+        + atualizarBombas(): void
+        + esperar(): void
+        + iniciar(): void
+        + moverInimigos(): void
+        + moverJogador(dir: Direcao): void
+        + pedirDica(): String
+        + plantarBomba(): void
+        + processarTurno(cmd: char): void
+        + reiniciarFase(): void
+        + reiniciarJogo(): void
+        + verificarColisoes(): void
+        + verificarFimJogo(): boolean
+    }
+
+    abstract class Personagem {
+        # vivo: boolean
+
+        + isDestruido(): boolean
+        + mover(dir: Direcao, tab: Tabuleiro): void
+        + receberDano(tab: Tabuleiro): void
+    }
+
+    class PortaSaida {
+        - aberta: boolean
+
+        + abrir(): void
+        + coletar(j: Jogador, jogo: Jogo): void
+        + getSimbolo(): char
+    }
+
+    class Posicao {
+        - coluna: int
+        - linha: int
+
+        + getColuna(): int
+        + getLinha(): int
+    }
+
+    abstract class PowerUp {
+        + {abstract} aplicar(j: Jogador): void
+        + coletar(j: Jogador, jogo: Jogo): void
+    }
+
+    class PowerUpBomba {
+        + aplicar(j: Jogador): void
+        + getSimbolo(): char
+    }
+
+    class PowerUpRaio {
+        + aplicar(j: Jogador): void
+        + getSimbolo(): char
+    }
+
+    class Tabuleiro {
+        - celulas: Celula[][]
+        - tamanho: int
+
+        + getCelula(p: Posicao): Celula
+        + imprimir(): void
+        + isLivre(p: Posicao): boolean
+        + posicaoValida(p: Posicao): boolean
+    }
+}
+
+package persistencia {
+    class GeradorMapa {
+        + carregarArquivo(caminho: String): Tabuleiro
+        + espalharCaixotes(tab: Tabuleiro): void
+        + espalharInimigos(tab: Tabuleiro, dif: Dificuldade): ArrayList<Inimigo>
+        + espalharItens(tab: Tabuleiro): void
+        + gerar(tamanho: int, dif: Dificuldade): Tabuleiro
+    }
+
+    class GerenciadorArquivo {
+        + carregarJogo(caminho: String): Jogo
+        + carregarRanking(): Ranking
+        + salvarJogo(jogo: Jogo, caminho: String): void
+        + salvarRanking(r: Ranking): void
+    }
+
+    class Ranking {
+        - registros: ArrayList<RegistroRanking>
+
+        + adicionar(r: RegistroRanking): void
+        + getTop10(): ArrayList<RegistroRanking>
+    }
+
+    class RegistroRanking {
+        - nome: String
+        - pontuacao: int
+        - tempoSegundos: long
+
+        + compareTo(o: RegistroRanking): int
+    }
+}
+
+ArquivoException <.. GeradorMapa : lança
+ArquivoException <.. GerenciadorArquivo : lança
+
+Bloco <|-- BlocoDestrutivo
+Bloco <|-- BlocoIndestrutivo
+
+BlocoDestrutivo o-- "0..1" Item : esconde
+
+Bomba <|-- BombaArmadilha
+
+BombaArmadilha o-- "1" Bloco : disfarce
+BombaArmadilha <.. InimigoSabotador : cria
+
+Celula o-- "0..1" Bloco
+Celula o-- "0..1" Bomba
+Celula o-- "0..1" Item
+Celula *-- "1" Posicao
+
+Comparable <|.. RegistroRanking
+
+Dificuldade "1" <-- Jogo
+
+ElementoMapa <|-down- Bloco
+ElementoMapa <|-- Bomba
+ElementoMapa <|-- Item
+ElementoMapa <|-- Personagem
+ElementoMapa *-- "1" Posicao
+
+EstadoJogo "1" <-- Jogo
+
+Exception <|-- JogoException
+
+Explosao <.. Bomba : cria
+Explosao *-- "1..*" Posicao
+
+GeradorMapa <.. Jogo : usa
+
+GerenciadorArquivo <.. Jogo : usa
+
+IDestrutivel <|.. BlocoDestrutivo
+IDestrutivel <|.. Personagem
+
+IMovel <|.. Personagem
+
+Inimigo <|-- InimigoComum
+Inimigo <|-- InimigoRastreador
+Inimigo <|-- InimigoSabotador
+
+Item <|-- PortaSaida
+Item <|-- PowerUp
+
+ITemporizavel <|.. Bomba
+
+JanelaPrincipal <.. Main : cria
+JanelaPrincipal *-- "1" PainelJogo
+JanelaPrincipal *-- "1" PainelMenu
+
+JFrame <|-- JanelaPrincipal
+
+Jogador "1" <-- Bomba : dono
+
+Jogo "1" *-- "0..*" Bomba
+Jogo "1" *-- "0..*" Inimigo
+Jogo "1" *-- "1" Jogador
+Jogo "1" <-- PainelJogo
+Jogo <.. PainelMenu : cria
+Jogo "1" *-- "1" Tabuleiro
+
+JogoException <|-- ArquivoException
+JogoException <.. Jogo : lança
+JogoException <|-- LimiteBombaException
+JogoException <|-- LimiteDicaException
+JogoException <|-- MovimentoInvalidoException
+
+JPanel <|-- PainelJogo
+JPanel <|-- PainelMenu
+
+LimiteBombaException <.. Jogador : lança
+
+LimiteDicaException <.. Jogo : lança
+
+MovimentoInvalidoException <.. Personagem : lança
+
+Personagem <|-down- Inimigo
+Personagem <|-- Jogador
+
+PowerUp <|-- PowerUpBomba
+PowerUp <|-- PowerUpRaio
+
+Ranking <.. GerenciadorArquivo : usa
+Ranking *-- "0..*" RegistroRanking
+
+Runnable <|.. Bomba
+Runnable <|.. Inimigo
+
+Tabuleiro *-- "*" Celula
+note on link: matriz n x n
+
+@enduml
