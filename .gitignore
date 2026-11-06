@@ -1,13 +1,13 @@
-   # Compilados
-   *.class
-   bin/
-   out/
+# Compilados
+*.class
+bin/
+out/
 
-   # IDEs
-   .idea/
-   *.iml
-   .vscode/
+# IDEs
+.idea/
+*.iml
+.vscode/
 
-   # Dados gerados ao jogar
-   saves/
-   ranking.txt
+# Dados gerados ao jogar
+saves/
+ranking.txt
