@@ -1,4 +1,3 @@
-   @"
    # Compilados
    *.class
    bin/
@@ -12,4 +11,3 @@
    # Dados gerados ao jogar
    saves/
    ranking.txt
-   "@ | Out-File -Encoding utf8 .gitignore
