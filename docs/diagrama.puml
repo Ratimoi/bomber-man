@@ -87,6 +87,7 @@ package modelo {
     }
 
     class BlocoDestrutivo {
+        - destruido: boolean
         - itemOculto: Item
 
         + getSimbolo(): char
