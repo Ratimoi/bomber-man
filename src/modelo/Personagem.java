@@ -1,5 +1,6 @@
 package modelo;
 
+import excecoes.MovimentoInvalidoException;
 import interfaces.IDestrutivel;
 import interfaces.IMovel;
 
@@ -17,7 +18,7 @@ abstract public class Personagem extends ElementoMapa implements IMovel, IDestru
     }
 
     @Override
-    public void mover(Direcao dir, Tabuleiro tab) {
+    public void mover(Direcao dir, Tabuleiro tab) throws MovimentoInvalidoException {
 
     }
 

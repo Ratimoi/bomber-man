@@ -1,7 +1,7 @@
 package excecoes;
 
-public class MovimentoInvalidoException extends RuntimeException {
-    public MovimentoInvalidoException(String message) {
-        super(message);
+public class MovimentoInvalidoException extends JogoException {
+    MovimentoInvalidoException() {
+        super("Movimento inválido\n");
     }
 }

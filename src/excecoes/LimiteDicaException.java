@@ -1,7 +1,7 @@
 package excecoes;
 
-public class LimiteDicaException extends RuntimeException {
-    public LimiteDicaException(String message) {
-        super(message);
+public class LimiteDicaException extends JogoException {
+    LimiteDicaException() {
+        super("Limite de dicas foi atingido\n");
     }
 }
