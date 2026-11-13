@@ -4,7 +4,7 @@ skinparam ClassAttributeIconSize 0
 skinparam linetype ortho
 skinparam nodesep 60
 skinparam ranksep 80
-hide empty members 
+hide empty members
 set separator none
 
 class Main {

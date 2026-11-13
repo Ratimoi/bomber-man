@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Relatorio de Analise - Projeto Bomberman</title>
+  <style>
+    @page { margin: 1.7cm; }
+    body {
+      color: #1f2933;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11pt;
+      line-height: 1.45;
+    }
+    h1, h2, h3 { color: #102a43; line-height: 1.2; }
+    h1 { border-bottom: 3px solid #2f80ed; font-size: 23pt; padding-bottom: 8px; }
+    h2 { border-bottom: 1px solid #bcccdc; font-size: 16pt; margin-top: 26px; padding-bottom: 4px; }
+    h3 { font-size: 12.5pt; margin-top: 18px; }
+    table { border-collapse: collapse; margin: 12px 0 18px; width: 100%; }
+    th, td { border: 1px solid #cbd5e1; padding: 7px 8px; vertical-align: top; }
+    th { background: #edf2f7; color: #102a43; }
+    code {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      font-family: Consolas, "Liberation Mono", monospace;
+      font-size: 9.5pt;
+      padding: 1px 4px;
+    }
+    pre {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-family: Consolas, "Liberation Mono", monospace;
+      font-size: 9pt;
+      overflow-wrap: break-word;
+      padding: 10px;
+      white-space: pre-wrap;
+    }
+    .meta {
+      background: #f8fafc;
+      border-left: 4px solid #2f80ed;
+      margin: 14px 0 20px;
+      padding: 10px 12px;
+    }
+    .ok { color: #0f766e; font-weight: bold; }
+    .warn { color: #b45309; font-weight: bold; }
+    .err { color: #b91c1c; font-weight: bold; }
+    .small { color: #52606d; font-size: 9.5pt; }
+  </style>
+</head>
+<body>
+  <h1>Relatorio de Analise - Projeto Bomberman</h1>
+  <div class="meta">
+    <strong>Projeto analisado:</strong> <code>bomber-man</code><br>
+    <strong>Diagrama analisado:</strong> <code>docs/diagrama.puml</code> e <code>docs/diagrama_bomberman.svg</code><br>
+    <strong>Codigo analisado:</strong> <code>src/**/*.java</code><br>
+    <strong>Data da analise:</strong> 12/11/2026
+  </div>
+
+  <h2>Resumo Executivo</h2>
+  <p>
+    O diagrama de classes descreve uma versao completa do jogo Bomberman, com modelo, interface grafica,
+    persistencia, excecoes e regras de jogo. O codigo atual, porem, ainda esta em fase inicial: muitas
+    classes existem apenas como esqueleto e algumas implementacoes ainda nao seguem o contrato do diagrama.
+  </p>
+  <p>
+    A compilacao falha imediatamente em <code>Bomba.java</code> por causa de uma virgula sobrando no construtor.
+    Ao testar em uma copia temporaria com essa virgula removida, aparecem outros erros importantes: construtores
+    de subclasses nao chamam o construtor de <code>ElementoMapa</code>, <code>Bomba</code> nao implementa
+    <code>getSimbolo()</code>, e <code>Personagem.mover</code> declara uma excecao que a interface
+    <code>IMovel</code> nao permite.
+  </p>
+
+  <h2>Passo 1 - Como Ler o Diagrama de Classes</h2>
+
+  <h3>1. Pacotes</h3>
+  <p>O diagrama separa o projeto em blocos de responsabilidade:</p>
+  <table>
+    <tr><th>Pacote</th><th>Responsabilidade</th></tr>
+    <tr><td><code>modelo</code></td><td>Contem as regras centrais do jogo: jogador, inimigos, bombas, tabuleiro, blocos, itens e estado da partida.</td></tr>
+    <tr><td><code>interfaces</code></td><td>Define comportamentos reutilizaveis, como mover, receber dano e controlar tempo.</td></tr>
+    <tr><td><code>persistencia</code></td><td>Cuida de carregar mapas, salvar jogo e manter ranking.</td></tr>
+    <tr><td><code>gui</code></td><td>Representa a interface grafica com Swing, usando janela principal, painel do jogo e painel do menu.</td></tr>
+    <tr><td><code>excecoes</code></td><td>Organiza erros especificos do jogo, todos baseados em <code>JogoException</code>.</td></tr>
+  </table>
+
+  <h3>2. Classe base: ElementoMapa</h3>
+  <p>
+    <code>ElementoMapa</code> e a classe abstrata que representa qualquer coisa posicionada no mapa. Ela guarda
+    uma <code>Posicao</code>, permite ler e alterar essa posicao, e obriga as subclasses a informarem um simbolo
+    por meio de <code>getSimbolo()</code>.
+  </p>
+  <p>
+    No diagrama, <code>Bloco</code>, <code>Bomba</code>, <code>Item</code> e <code>Personagem</code> herdam de
+    <code>ElementoMapa</code>. Isso cria uma regra simples: tudo que aparece no mapa deve saber onde esta e como
+    se representar.
+  </p>
+
+  <h3>3. Posicao e Celula</h3>
+  <p>
+    <code>Posicao</code> guarda coordenadas de linha e coluna. <code>Celula</code> representa uma casa do tabuleiro
+    e pode conter ate um bloco, uma bomba e um item. Ela tambem sabe dizer se pode ser atravessada e qual simbolo
+    deve aparecer naquela casa.
+  </p>
+
+  <h3>4. Tabuleiro</h3>
+  <p>
+    <code>Tabuleiro</code> contem uma matriz de <code>Celula</code>. Seus metodos principais deveriam buscar uma
+    celula por posicao, verificar se a posicao e valida, testar se esta livre e imprimir o mapa.
+  </p>
+
+  <h3>5. Blocos</h3>
+  <p>
+    <code>Bloco</code> e abstrata e guarda se o bloco e transponivel. <code>BlocoIndestrutivo</code> representa
+    parede fixa, normalmente com simbolo <code>#</code>. <code>BlocoDestrutivo</code> representa caixa ou obstaculo
+    que pode receber dano, ser destruido e esconder um item.
+  </p>
+
+  <h3>6. Interfaces</h3>
+  <table>
+    <tr><th>Interface</th><th>Quem usa</th><th>Sentido no jogo</th></tr>
+    <tr><td><code>IMovel</code></td><td><code>Personagem</code></td><td>Define que o objeto pode se mover em uma direcao no tabuleiro.</td></tr>
+    <tr><td><code>IDestrutivel</code></td><td><code>Personagem</code> e <code>BlocoDestrutivo</code></td><td>Define que o objeto pode receber dano e informar se foi destruido.</td></tr>
+    <tr><td><code>ITemporizavel</code></td><td><code>Bomba</code></td><td>Define contagem de tempo por <code>tick()</code> e consulta de tempo restante.</td></tr>
+  </table>
+
+  <h3>7. Personagens</h3>
+  <p>
+    <code>Personagem</code> e a base de <code>Jogador</code> e <code>Inimigo</code>. Ele possui o atributo
+    <code>vivo</code>, pode se mover e pode receber dano. No diagrama, esse e o ponto comum para tudo que tem vida
+    e ocupa o mapa.
+  </p>
+  <p>
+    <code>Jogador</code> concentra dados como nome, vidas, pontuacao, limite de bombas e raio da explosao.
+    Ele pode plantar bomba, perder vida e receber melhorias.
+  </p>
+  <p>
+    <code>Inimigo</code> e abstrata e define a acao geral do inimigo. As subclasses mudam a inteligencia:
+    <code>InimigoComum</code> decide movimentos simples, <code>InimigoRastreador</code> persegue o jogador, e
+    <code>InimigoSabotador</code> procura bombas e pode transforma-las em armadilhas.
+  </p>
+
+  <h3>8. Bombas e explosoes</h3>
+  <p>
+    <code>Bomba</code> pertence a um <code>Jogador</code>, tem raio, tempo restante e tempo total. Ela deveria
+    implementar <code>Runnable</code> e <code>ITemporizavel</code>, permitindo contagem de tempo e explosao.
+    Ao explodir, cria uma <code>Explosao</code>, que guarda a origem e as celulas atingidas.
+  </p>
+  <p>
+    <code>BombaArmadilha</code> herda de <code>Bomba</code> e possui um <code>Bloco</code> usado como disfarce.
+    No diagrama, ela e criada pelo <code>InimigoSabotador</code>.
+  </p>
+
+  <h3>9. Itens e power-ups</h3>
+  <p>
+    <code>Item</code> e a base para objetos coletaveis. <code>PowerUp</code> e um tipo de item que aplica efeito
+    ao jogador. <code>PowerUpBomba</code> aumenta o limite de bombas, <code>PowerUpRaio</code> aumenta o raio da
+    explosao, e <code>PortaSaida</code> representa a saida da fase.
+  </p>
+
+  <h3>10. Jogo</h3>
+  <p>
+    <code>Jogo</code> e a classe controladora principal. Ela agrega jogador, inimigos, bombas, tabuleiro, dificuldade,
+    estado, turno, dicas e modo debug. Os metodos do diagrama mostram que ela deveria iniciar a partida, processar
+    comandos, mover jogador, mover inimigos, atualizar bombas, verificar colisao e detectar vitoria ou derrota.
+  </p>
+
+  <h3>11. Persistencia</h3>
+  <p>
+    <code>GeradorMapa</code> deveria carregar ou gerar tabuleiros, espalhar caixas, itens e inimigos. <code>GerenciadorArquivo</code>
+    deveria salvar e carregar jogos e rankings. <code>Ranking</code> guarda registros, e <code>RegistroRanking</code>
+    deveria implementar <code>Comparable</code> para ordenar pontuacoes.
+  </p>
+
+  <h3>12. Interface grafica</h3>
+  <p>
+    O diagrama coloca a interface grafica no pacote <code>gui</code>. <code>JanelaPrincipal</code> herda de
+    <code>JFrame</code> e contem <code>PainelJogo</code> e <code>PainelMenu</code>. <code>PainelJogo</code>
+    desenha o jogo com <code>paintComponent</code>, e <code>PainelMenu</code> oferece acoes como jogar, carregar,
+    ver ranking e sair.
+  </p>
+
+  <h3>13. Relacionamentos importantes</h3>
+  <table>
+    <tr><th>Relacionamento</th><th>Significado</th></tr>
+    <tr><td>Heranca: seta com triangulo</td><td>Uma classe especializada reaproveita a classe base. Exemplo: <code>Jogador</code> herda de <code>Personagem</code>.</td></tr>
+    <tr><td>Implementacao de interface</td><td>A classe promete cumprir os metodos da interface. Exemplo: <code>Bomba</code> deveria implementar <code>ITemporizavel</code>.</td></tr>
+    <tr><td>Composicao: losango preenchido</td><td>Um objeto faz parte do outro e depende dele. Exemplo: <code>Jogo</code> contem <code>Tabuleiro</code>.</td></tr>
+    <tr><td>Agregacao: losango vazio</td><td>Um objeto referencia outro, mas nao necessariamente controla seu ciclo de vida. Exemplo: <code>Celula</code> pode conter <code>Bomba</code>.</td></tr>
+    <tr><td>Dependencia: seta pontilhada</td><td>Uma classe usa outra em algum metodo. Exemplo: <code>GeradorMapa</code> e usado por <code>Jogo</code>.</td></tr>
+  </table>
+
+  <h2>Passo 2 - Erros Encontrados no Codigo</h2>
+
+  <h3>1. Erro que impede a compilacao imediatamente</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Linha</th><th>Problema</th><th>Como corrigir</th></tr>
+    <tr>
+      <td><code>src/modelo/Bomba.java</code></td>
+      <td>10</td>
+      <td><span class="err">Erro sintatico:</span> <code>Bomba(Jogador dono,)</code> tem uma virgula sobrando.</td>
+      <td>Trocar para algo como <code>Bomba(Jogador dono)</code> ou completar os parametros esperados.</td>
+    </tr>
+  </table>
+
+  <pre>src/modelo/Bomba.java:10: error: illegal start of type
+    Bomba(Jogador dono,) {
+                       ^
+1 error</pre>
+
+  <h3>2. Erros que aparecem apos remover temporariamente a virgula</h3>
+  <p class="small">Estes erros foram verificados em uma copia temporaria, sem alterar o projeto original.</p>
+  <table>
+    <tr><th>Arquivo</th><th>Problema</th><th>Motivo</th><th>Correcao sugerida</th></tr>
+    <tr>
+      <td><code>Bloco.java</code></td>
+      <td>Construtor nao chama <code>super(posicao)</code>.</td>
+      <td><code>ElementoMapa</code> exige uma <code>Posicao</code> no construtor.</td>
+      <td>Alterar o construtor de <code>Bloco</code> para receber <code>Posicao</code> e chamar <code>super(posicao)</code>.</td>
+    </tr>
+    <tr>
+      <td><code>Bomba.java</code></td>
+      <td><code>Bomba</code> nao implementa <code>getSimbolo()</code>.</td>
+      <td><code>ElementoMapa</code> tem metodo abstrato <code>getSimbolo()</code>.</td>
+      <td>Implementar <code>public char getSimbolo()</code>, por exemplo retornando <code>'B'</code>.</td>
+    </tr>
+    <tr>
+      <td><code>Bomba.java</code></td>
+      <td>Construtor nao chama <code>super(posicao)</code>.</td>
+      <td>Como <code>Bomba</code> herda de <code>ElementoMapa</code>, precisa inicializar a posicao.</td>
+      <td>Adicionar <code>Posicao posicao</code> ao construtor e chamar <code>super(posicao)</code>.</td>
+    </tr>
+    <tr>
+      <td><code>Personagem.java</code></td>
+      <td><code>mover</code> declara <code>throws MovimentoInvalidoException</code>, mas a interface <code>IMovel</code> nao declara.</td>
+      <td>Uma implementacao nao pode adicionar excecao checada que nao esta no metodo da interface.</td>
+      <td>Adicionar <code>throws MovimentoInvalidoException</code> em <code>IMovel.mover</code> ou remover esse <code>throws</code> da implementacao.</td>
+    </tr>
+  </table>
+
+  <pre>/tmp/bomberman-compile-check/src/modelo/Bloco.java:6: error: constructor ElementoMapa in class ElementoMapa cannot be applied to given types;
+/tmp/bomberman-compile-check/src/modelo/Personagem.java:21: error: mover(Direcao,Tabuleiro) in Personagem cannot implement mover(Direcao,Tabuleiro) in IMovel
+/tmp/bomberman-compile-check/src/modelo/Bomba.java:3: error: Bomba is not abstract and does not override abstract method getSimbolo() in ElementoMapa
+/tmp/bomberman-compile-check/src/modelo/Bomba.java:10: error: constructor ElementoMapa in class ElementoMapa cannot be applied to given types;
+/tmp/bomberman-compile-check/src/modelo/Inimigo.java:3: error: mover(Direcao,Tabuleiro) in Personagem cannot implement mover(Direcao,Tabuleiro) in IMovel</pre>
+
+  <h3>3. Problemas de logica ou implementacao incompleta</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Observacao</th><th>Impacto</th></tr>
+    <tr><td><code>ElementoMapa.java</code></td><td><code>setPosicao(Posicao p)</code> faz <code>this.posicao = posicao</code> em vez de usar <code>p</code>.</td><td>A posicao nunca sera alterada corretamente.</td></tr>
+    <tr><td><code>Bloco.java</code></td><td><code>isTransponivel()</code> sempre retorna <code>false</code>, ignorando o atributo.</td><td>Blocos marcados como transponiveis continuarao bloqueando passagem.</td></tr>
+    <tr><td><code>BlocoDestrutivo.java</code></td><td>Existe <code>itemOculto</code>, mas nao ha atributo <code>destruido</code> nem <code>receberDano</code>.</td><td>O bloco nao cumpre o comportamento esperado pelo diagrama.</td></tr>
+    <tr><td><code>Personagem.java</code></td><td><code>mover</code> e <code>receberDano</code> estao vazios.</td><td>Personagens nao se movem nem sofrem dano de verdade.</td></tr>
+    <tr><td><code>Jogo.java</code></td><td>Classe esta vazia.</td><td>Falta o controlador principal do jogo.</td></tr>
+    <tr><td><code>Tabuleiro.java</code></td><td>Classe esta vazia.</td><td>Falta a matriz do mapa e as regras de ocupacao.</td></tr>
+    <tr><td><code>Jogador.java</code></td><td>Classe esta vazia.</td><td>Faltam vidas, pontuacao, bomba, raio e acoes do jogador.</td></tr>
+    <tr><td><code>Item.java</code></td><td>Esta como classe concreta vazia, mas o diagrama espera classe abstrata.</td><td>Power-ups e porta de saida ficam sem contrato comum de coleta.</td></tr>
+    <tr><td><code>PowerUp.java</code></td><td>Esta abstrata, mas nao define <code>aplicar</code> nem <code>coletar</code>.</td><td>Power-ups nao tem efeito no jogador.</td></tr>
+    <tr><td><code>InimigoComum.java</code>, <code>InimigoSabotador.java</code>, <code>InimigoRastejador.java</code></td><td>Nao herdam de <code>Inimigo</code>.</td><td>As subclasses de inimigo nao funcionam polimorficamente.</td></tr>
+    <tr><td><code>BombaArmadilha.java</code></td><td>Nao herda de <code>Bomba</code>.</td><td>A armadilha nao reaproveita o comportamento de bomba.</td></tr>
+    <tr><td><code>RegistroRanking.java</code></td><td>Nao implementa <code>Comparable</code>.</td><td>Ranking nao pode ser ordenado como previsto.</td></tr>
+    <tr><td><code>Main.java</code></td><td>Apenas imprime <code>Funciona</code>.</td><td>A aplicacao ainda nao inicia menu, janela ou jogo.</td></tr>
+  </table>
+
+  <h3>4. Divergencias entre diagrama e codigo</h3>
+  <table>
+    <tr><th>No diagrama</th><th>No codigo</th><th>Consequencia</th></tr>
+    <tr><td>Pacote <code>gui</code></td><td>Classes de interface estao em <code>modelo</code>.</td><td>A arquitetura real nao bate com o diagrama.</td></tr>
+    <tr><td><code>PainelJogo</code></td><td>Arquivo/classe <code>PaineldoJogo</code>.</td><td>Nome diferente dificulta rastrear relacoes e pode gerar erro quando a GUI for implementada.</td></tr>
+    <tr><td><code>InimigoRastreador</code></td><td><code>InimigoRastejador</code>.</td><td>O nome nao corresponde ao diagrama nem ao comportamento descrito de perseguidor.</td></tr>
+    <tr><td><code>Bomba implements Runnable, ITemporizavel</code></td><td><code>Bomba</code> apenas herda de <code>ElementoMapa</code>.</td><td>Faltam tempo, <code>tick</code>, <code>run</code> e contrato temporizado.</td></tr>
+    <tr><td><code>BlocoDestrutivo implements IDestrutivel</code></td><td>Nao implementa a interface.</td><td>O codigo nao garante os metodos de destruicao.</td></tr>
+    <tr><td>Classes Swing herdam de <code>JFrame</code>/<code>JPanel</code></td><td>Classes GUI sao vazias e nao herdam de Swing.</td><td>A interface grafica ainda nao existe funcionalmente.</td></tr>
+  </table>
+
+  <h2>Passo 3 - Informacoes Uteis para Corrigir</h2>
+
+  <h3>Ordem recomendada de correcao</h3>
+  <ol>
+    <li>Corrigir o erro sintatico de <code>Bomba.java</code>.</li>
+    <li>Decidir o construtor padrao de <code>ElementoMapa</code>: ou todas as subclasses recebem <code>Posicao</code>, ou <code>ElementoMapa</code> ganha um construtor vazio protegido.</li>
+    <li>Alinhar interfaces e excecoes, principalmente <code>IMovel.mover</code> e <code>MovimentoInvalidoException</code>.</li>
+    <li>Implementar os metodos abstratos obrigatorios, especialmente <code>getSimbolo()</code>.</li>
+    <li>Fazer as herancas baterem com o diagrama: inimigos, bomba armadilha, itens, power-ups e ranking.</li>
+    <li>Implementar <code>Tabuleiro</code> e <code>Celula</code>, porque o resto do jogo depende disso.</li>
+    <li>Implementar <code>Jogo</code> como controlador central.</li>
+    <li>Depois disso, integrar <code>Main</code>, GUI e persistencia.</li>
+  </ol>
+
+  <h3>Comandos usados na verificacao</h3>
+  <pre>javac -d /tmp/bomberman-build $(find src -name '*.java')</pre>
+  <p>Resultado: falha em <code>Bomba.java</code> por erro sintatico.</p>
+  <pre>javac -d /tmp/bomberman-build2 $(find /tmp/bomberman-compile-check/src -name '*.java')</pre>
+  <p>Resultado: apos remover a virgula em copia temporaria, surgem cinco erros adicionais de contrato/heranca.</p>
+
+  <h3>Checklist para comparar codigo e diagrama</h3>
+  <ul>
+    <li>Cada classe do diagrama existe no codigo?</li>
+    <li>O nome da classe esta igual ao diagrama?</li>
+    <li>O pacote esta igual ao diagrama?</li>
+    <li>As herancas estao implementadas com <code>extends</code>?</li>
+    <li>As interfaces estao implementadas com <code>implements</code>?</li>
+    <li>Todo metodo abstrato foi implementado nas classes concretas?</li>
+    <li>Os construtores chamam corretamente <code>super(...)</code>?</li>
+    <li>As excecoes checadas aparecem tambem nas interfaces, quando necessario?</li>
+  </ul>
+
+  <h2>Conclusao</h2>
+  <p>
+    O diagrama esta bem mais completo que o codigo atual e serve como um bom roteiro de implementacao. Neste
+    momento, o projeto ainda nao esta pronto para execucao real do jogo: primeiro e necessario corrigir a compilacao,
+    alinhar herancas/interfaces e implementar as classes centrais <code>Tabuleiro</code>, <code>Jogo</code>,
+    <code>Jogador</code>, <code>Bomba</code> e <code>Personagem</code>.
+  </p>
+</body>
+</html>

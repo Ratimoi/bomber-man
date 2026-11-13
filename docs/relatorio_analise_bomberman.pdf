@@ -1,0 +1,353 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R] /Count 6 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Length 3382 >>
+stream
+BT
+/F2 18.0 Tf
+1 0 0 1 54.0 788.0 Tm (Relatorio de Analise - Projeto Bomberman) Tj
+1 0 0 1 54.0 756.0 Tm (Relatorio de Analise - Projeto Bomberman) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 724.0 Tm (Projeto analisado:bomber-manDiagrama analisado:docs/diagrama.puml e) Tj
+1 0 0 1 54.0 710.0 Tm (  docs/diagrama_bomberman.svgCodigo analisado:src/**/*.javaData da analise: 12/11/2026) Tj
+/F2 14.0 Tf
+1 0 0 1 54.0 681.0 Tm (Resumo Executivo) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 657.0 Tm (O diagrama de classes descreve uma versao completa do jogo Bomberman, com modelo,) Tj
+1 0 0 1 54.0 643.0 Tm (  interface grafica, persistencia, excecoes e regras de jogo. O codigo atual, porem,) Tj
+1 0 0 1 54.0 629.0 Tm (  ainda esta em fase inicial: muitas classes existem apenas como esqueleto e algumas) Tj
+1 0 0 1 54.0 615.0 Tm (  implementacoes ainda nao seguem o contrato do diagrama.) Tj
+1 0 0 1 54.0 594.0 Tm (A compilacao falha imediatamente em Bomba.java por causa de uma virgula sobrando no) Tj
+1 0 0 1 54.0 580.0 Tm (  construtor. Ao testar em uma copia temporaria com essa virgula removida, aparecem) Tj
+1 0 0 1 54.0 566.0 Tm (  outros erros importantes: construtores de subclasses nao chamam o construtor de) Tj
+1 0 0 1 54.0 552.0 Tm (  ElementoMapa, Bomba nao implementa getSimbolo\(\), e Personagem.mover declara uma excecao) Tj
+1 0 0 1 54.0 538.0 Tm (  que a interface IMovel nao permite.) Tj
+/F2 14.0 Tf
+1 0 0 1 54.0 509.0 Tm (Passo 1 - Como Ler o Diagrama de Classes) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 480.0 Tm (1. Pacotes) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 456.0 Tm (O diagrama separa o projeto em blocos de responsabilidade:) Tj
+1 0 0 1 54.0 435.0 Tm (Pacote | Responsabilidade) Tj
+1 0 0 1 54.0 414.0 Tm (modelo | Contem as regras centrais do jogo: jogador, inimigos, bombas, tabuleiro,) Tj
+1 0 0 1 54.0 400.0 Tm (  blocos, itens e estado da partida.) Tj
+1 0 0 1 54.0 379.0 Tm (interfaces | Define comportamentos reutilizaveis, como mover, receber dano e controlar) Tj
+1 0 0 1 54.0 365.0 Tm (  tempo.) Tj
+1 0 0 1 54.0 344.0 Tm (persistencia | Cuida de carregar mapas, salvar jogo e manter ranking.) Tj
+1 0 0 1 54.0 323.0 Tm (gui | Representa a interface grafica com Swing, usando janela principal, painel do jogo) Tj
+1 0 0 1 54.0 309.0 Tm (  e painel do menu.) Tj
+1 0 0 1 54.0 288.0 Tm (excecoes | Organiza erros especificos do jogo, todos baseados em JogoException.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 262.0 Tm (2. Classe base: ElementoMapa) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 238.0 Tm (ElementoMapa e a classe abstrata que representa qualquer coisa posicionada no mapa. Ela) Tj
+1 0 0 1 54.0 224.0 Tm (  guarda uma Posicao, permite ler e alterar essa posicao, e obriga as subclasses a) Tj
+1 0 0 1 54.0 210.0 Tm (  informarem um simbolo por meio de getSimbolo\(\).) Tj
+1 0 0 1 54.0 189.0 Tm (No diagrama, Bloco, Bomba, Item e Personagem herdam de ElementoMapa. Isso cria uma) Tj
+1 0 0 1 54.0 175.0 Tm (  regra simples: tudo que aparece no mapa deve saber onde esta e como se representar.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 149.0 Tm (3. Posicao e Celula) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 125.0 Tm (Posicao guarda coordenadas de linha e coluna. Celula representa uma casa do tabuleiro e) Tj
+1 0 0 1 54.0 111.0 Tm (  pode conter ate um bloco, uma bomba e um item. Ela tambem sabe dizer se pode ser) Tj
+1 0 0 1 54.0 97.0 Tm (  atravessada e qual simbolo deve aparecer naquela casa.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 71.0 Tm (4. Tabuleiro) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 3555 >>
+stream
+BT
+/F1 10.5 Tf
+1 0 0 1 54.0 788.0 Tm (Tabuleiro contem uma matriz de Celula. Seus metodos principais deveriam buscar uma) Tj
+1 0 0 1 54.0 774.0 Tm (  celula por posicao, verificar se a posicao e valida, testar se esta livre e imprimir o) Tj
+1 0 0 1 54.0 760.0 Tm (  mapa.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 734.0 Tm (5. Blocos) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 710.0 Tm (Bloco e abstrata e guarda se o bloco e transponivel. BlocoIndestrutivo representa) Tj
+1 0 0 1 54.0 696.0 Tm (  parede fixa, normalmente com simbolo #. BlocoDestrutivo representa caixa ou obstaculo) Tj
+1 0 0 1 54.0 682.0 Tm (  que pode receber dano, ser destruido e esconder um item.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 656.0 Tm (6. Interfaces) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 632.0 Tm (Interface | Quem usa | Sentido no jogo) Tj
+1 0 0 1 54.0 611.0 Tm (IMovel | Personagem | Define que o objeto pode se mover em uma direcao no tabuleiro.) Tj
+1 0 0 1 54.0 590.0 Tm (IDestrutivel | Personagem e BlocoDestrutivo | Define que o objeto pode receber dano e) Tj
+1 0 0 1 54.0 576.0 Tm (  informar se foi destruido.) Tj
+1 0 0 1 54.0 555.0 Tm (ITemporizavel | Bomba | Define contagem de tempo por tick\(\) e consulta de tempo) Tj
+1 0 0 1 54.0 541.0 Tm (  restante.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 515.0 Tm (7. Personagens) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 491.0 Tm (Personagem e a base de Jogador e Inimigo. Ele possui o atributo vivo, pode se mover e) Tj
+1 0 0 1 54.0 477.0 Tm (  pode receber dano. No diagrama, esse e o ponto comum para tudo que tem vida e ocupa o) Tj
+1 0 0 1 54.0 463.0 Tm (  mapa.) Tj
+1 0 0 1 54.0 442.0 Tm (Jogador concentra dados como nome, vidas, pontuacao, limite de bombas e raio da) Tj
+1 0 0 1 54.0 428.0 Tm (  explosao. Ele pode plantar bomba, perder vida e receber melhorias.) Tj
+1 0 0 1 54.0 407.0 Tm (Inimigo e abstrata e define a acao geral do inimigo. As subclasses mudam a) Tj
+1 0 0 1 54.0 393.0 Tm (  inteligencia: InimigoComum decide movimentos simples, InimigoRastreador persegue o) Tj
+1 0 0 1 54.0 379.0 Tm (  jogador, e InimigoSabotador procura bombas e pode transforma-las em armadilhas.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 353.0 Tm (8. Bombas e explosoes) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 329.0 Tm (Bomba pertence a um Jogador, tem raio, tempo restante e tempo total. Ela deveria) Tj
+1 0 0 1 54.0 315.0 Tm (  implementar Runnable e ITemporizavel, permitindo contagem de tempo e explosao. Ao) Tj
+1 0 0 1 54.0 301.0 Tm (  explodir, cria uma Explosao, que guarda a origem e as celulas atingidas.) Tj
+1 0 0 1 54.0 280.0 Tm (BombaArmadilha herda de Bomba e possui um Bloco usado como disfarce. No diagrama, ela e) Tj
+1 0 0 1 54.0 266.0 Tm (  criada pelo InimigoSabotador.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 240.0 Tm (9. Itens e power-ups) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 216.0 Tm (Item e a base para objetos coletaveis. PowerUp e um tipo de item que aplica efeito ao) Tj
+1 0 0 1 54.0 202.0 Tm (  jogador. PowerUpBomba aumenta o limite de bombas, PowerUpRaio aumenta o raio da) Tj
+1 0 0 1 54.0 188.0 Tm (  explosao, e PortaSaida representa a saida da fase.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 162.0 Tm (10. Jogo) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 138.0 Tm (Jogo e a classe controladora principal. Ela agrega jogador, inimigos, bombas,) Tj
+1 0 0 1 54.0 124.0 Tm (  tabuleiro, dificuldade, estado, turno, dicas e modo debug. Os metodos do diagrama) Tj
+1 0 0 1 54.0 110.0 Tm (  mostram que ela deveria iniciar a partida, processar comandos, mover jogador, mover) Tj
+1 0 0 1 54.0 96.0 Tm (  inimigos, atualizar bombas, verificar colisao e detectar vitoria ou derrota.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 70.0 Tm (11. Persistencia) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 3491 >>
+stream
+BT
+/F1 10.5 Tf
+1 0 0 1 54.0 788.0 Tm (GeradorMapa deveria carregar ou gerar tabuleiros, espalhar caixas, itens e inimigos.) Tj
+1 0 0 1 54.0 774.0 Tm (  GerenciadorArquivo deveria salvar e carregar jogos e rankings. Ranking guarda) Tj
+1 0 0 1 54.0 760.0 Tm (  registros, e RegistroRanking deveria implementar Comparable para ordenar pontuacoes.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 734.0 Tm (12. Interface grafica) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 710.0 Tm (O diagrama coloca a interface grafica no pacote gui. JanelaPrincipal herda de JFrame e) Tj
+1 0 0 1 54.0 696.0 Tm (  contem PainelJogo e PainelMenu. PainelJogo desenha o jogo com paintComponent, e) Tj
+1 0 0 1 54.0 682.0 Tm (  PainelMenu oferece acoes como jogar, carregar, ver ranking e sair.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 656.0 Tm (13. Relacionamentos importantes) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 632.0 Tm (Relacionamento | Significado) Tj
+1 0 0 1 54.0 611.0 Tm (Heranca: seta com triangulo | Uma classe especializada reaproveita a classe base.) Tj
+1 0 0 1 54.0 597.0 Tm (  Exemplo: Jogador herda de Personagem.) Tj
+1 0 0 1 54.0 576.0 Tm (Implementacao de interface | A classe promete cumprir os metodos da interface. Exemplo:) Tj
+1 0 0 1 54.0 562.0 Tm (  Bomba deveria implementar ITemporizavel.) Tj
+1 0 0 1 54.0 541.0 Tm (Composicao: losango preenchido | Um objeto faz parte do outro e depende dele. Exemplo:) Tj
+1 0 0 1 54.0 527.0 Tm (  Jogo contem Tabuleiro.) Tj
+1 0 0 1 54.0 506.0 Tm (Agregacao: losango vazio | Um objeto referencia outro, mas nao necessariamente controla) Tj
+1 0 0 1 54.0 492.0 Tm (  seu ciclo de vida. Exemplo: Celula pode conter Bomba.) Tj
+1 0 0 1 54.0 471.0 Tm (Dependencia: seta pontilhada | Uma classe usa outra em algum metodo. Exemplo:) Tj
+1 0 0 1 54.0 457.0 Tm (  GeradorMapa e usado por Jogo.) Tj
+/F2 14.0 Tf
+1 0 0 1 54.0 428.0 Tm (Passo 2 - Erros Encontrados no Codigo) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 399.0 Tm (1. Erro que impede a compilacao imediatamente) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 375.0 Tm (Arquivo | Linha | Problema | Como corrigir) Tj
+1 0 0 1 54.0 354.0 Tm (src/modelo/Bomba.java | 10 | Erro sintatico:Bomba\(Jogador dono,\) tem uma virgula) Tj
+1 0 0 1 54.0 340.0 Tm (  sobrando. | Trocar para algo como Bomba\(Jogador dono\) ou completar os parametros) Tj
+1 0 0 1 54.0 326.0 Tm (  esperados.) Tj
+1 0 0 1 54.0 305.0 Tm (src/modelo/Bomba.java:10: error: illegal start of type) Tj
+1 0 0 1 54.0 291.0 Tm (Bomba\(Jogador dono,\) {) Tj
+1 0 0 1 54.0 277.0 Tm (^) Tj
+1 0 0 1 54.0 263.0 Tm (1 error) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 237.0 Tm (2. Erros que aparecem apos remover temporariamente a virgula) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 213.0 Tm (Estes erros foram verificados em uma copia temporaria, sem alterar o projeto original.) Tj
+1 0 0 1 54.0 192.0 Tm (Arquivo | Problema | Motivo | Correcao sugerida) Tj
+1 0 0 1 54.0 171.0 Tm (Bloco.java | Construtor nao chama super\(posicao\). | ElementoMapa exige uma Posicao no) Tj
+1 0 0 1 54.0 157.0 Tm (  construtor. | Alterar o construtor de Bloco para receber Posicao e chamar) Tj
+1 0 0 1 54.0 143.0 Tm (  super\(posicao\).) Tj
+1 0 0 1 54.0 122.0 Tm (Bomba.java | Bomba nao implementa getSimbolo\(\). | ElementoMapa tem metodo abstrato) Tj
+1 0 0 1 54.0 108.0 Tm (  getSimbolo\(\). | Implementar public char getSimbolo\(\), por exemplo retornando 'B'.) Tj
+1 0 0 1 54.0 87.0 Tm (Bomba.java | Construtor nao chama super\(posicao\). | Como Bomba herda de ElementoMapa,) Tj
+1 0 0 1 54.0 73.0 Tm (  precisa inicializar a posicao. | Adicionar Posicao posicao ao construtor e chamar) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 3848 >>
+stream
+BT
+/F1 10.5 Tf
+1 0 0 1 54.0 788.0 Tm (  super\(posicao\).) Tj
+1 0 0 1 54.0 767.0 Tm (Personagem.java | mover declara throws MovimentoInvalidoException, mas a interface) Tj
+1 0 0 1 54.0 753.0 Tm (  IMovel nao declara. | Uma implementacao nao pode adicionar excecao checada que nao esta) Tj
+1 0 0 1 54.0 739.0 Tm (  no metodo da interface. | Adicionar throws MovimentoInvalidoException em IMovel.mover) Tj
+1 0 0 1 54.0 725.0 Tm (  ou remover esse throws da implementacao.) Tj
+1 0 0 1 54.0 704.0 Tm (/tmp/bomberman-compile-check/src/modelo/Bloco.java:6: error: constructor ElementoMapa) Tj
+1 0 0 1 54.0 690.0 Tm (  in class ElementoMapa cannot be applied to given types;) Tj
+1 0 0 1 54.0 676.0 Tm (/tmp/bomberman-compile-check/src/modelo/Personagem.java:21: error:) Tj
+1 0 0 1 54.0 662.0 Tm (  mover\(Direcao,Tabuleiro\) in Personagem cannot implement mover\(Direcao,Tabuleiro\) in) Tj
+1 0 0 1 54.0 648.0 Tm (  IMovel) Tj
+1 0 0 1 54.0 634.0 Tm (/tmp/bomberman-compile-check/src/modelo/Bomba.java:3: error: Bomba is not abstract and) Tj
+1 0 0 1 54.0 620.0 Tm (  does not override abstract method getSimbolo\(\) in ElementoMapa) Tj
+1 0 0 1 54.0 606.0 Tm (/tmp/bomberman-compile-check/src/modelo/Bomba.java:10: error: constructor ElementoMapa) Tj
+1 0 0 1 54.0 592.0 Tm (  in class ElementoMapa cannot be applied to given types;) Tj
+1 0 0 1 54.0 578.0 Tm (/tmp/bomberman-compile-check/src/modelo/Inimigo.java:3: error: mover\(Direcao,Tabuleiro\)) Tj
+1 0 0 1 54.0 564.0 Tm (  in Personagem cannot implement mover\(Direcao,Tabuleiro\) in IMovel) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 538.0 Tm (3. Problemas de logica ou implementacao incompleta) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 514.0 Tm (Arquivo | Observacao | Impacto) Tj
+1 0 0 1 54.0 493.0 Tm (ElementoMapa.java | setPosicao\(Posicao p\) faz this.posicao = posicao em vez de usar p.) Tj
+1 0 0 1 54.0 479.0 Tm (  | A posicao nunca sera alterada corretamente.) Tj
+1 0 0 1 54.0 458.0 Tm (Bloco.java | isTransponivel\(\) sempre retorna false, ignorando o atributo. | Blocos) Tj
+1 0 0 1 54.0 444.0 Tm (  marcados como transponiveis continuarao bloqueando passagem.) Tj
+1 0 0 1 54.0 423.0 Tm (BlocoDestrutivo.java | Existe itemOculto, mas nao ha atributo destruido nem) Tj
+1 0 0 1 54.0 409.0 Tm (  receberDano. | O bloco nao cumpre o comportamento esperado pelo diagrama.) Tj
+1 0 0 1 54.0 388.0 Tm (Personagem.java | mover e receberDano estao vazios. | Personagens nao se movem nem) Tj
+1 0 0 1 54.0 374.0 Tm (  sofrem dano de verdade.) Tj
+1 0 0 1 54.0 353.0 Tm (Jogo.java | Classe esta vazia. | Falta o controlador principal do jogo.) Tj
+1 0 0 1 54.0 332.0 Tm (Tabuleiro.java | Classe esta vazia. | Falta a matriz do mapa e as regras de ocupacao.) Tj
+1 0 0 1 54.0 311.0 Tm (Jogador.java | Classe esta vazia. | Faltam vidas, pontuacao, bomba, raio e acoes do) Tj
+1 0 0 1 54.0 297.0 Tm (  jogador.) Tj
+1 0 0 1 54.0 276.0 Tm (Item.java | Esta como classe concreta vazia, mas o diagrama espera classe abstrata. |) Tj
+1 0 0 1 54.0 262.0 Tm (  Power-ups e porta de saida ficam sem contrato comum de coleta.) Tj
+1 0 0 1 54.0 241.0 Tm (PowerUp.java | Esta abstrata, mas nao define aplicar nem coletar. | Power-ups nao tem) Tj
+1 0 0 1 54.0 227.0 Tm (  efeito no jogador.) Tj
+1 0 0 1 54.0 206.0 Tm (InimigoComum.java, InimigoSabotador.java, InimigoRastejador.java | Nao herdam de) Tj
+1 0 0 1 54.0 192.0 Tm (  Inimigo. | As subclasses de inimigo nao funcionam polimorficamente.) Tj
+1 0 0 1 54.0 171.0 Tm (BombaArmadilha.java | Nao herda de Bomba. | A armadilha nao reaproveita o comportamento) Tj
+1 0 0 1 54.0 157.0 Tm (  de bomba.) Tj
+1 0 0 1 54.0 136.0 Tm (RegistroRanking.java | Nao implementa Comparable. | Ranking nao pode ser ordenado como) Tj
+1 0 0 1 54.0 122.0 Tm (  previsto.) Tj
+1 0 0 1 54.0 101.0 Tm (Main.java | Apenas imprime Funciona. | A aplicacao ainda nao inicia menu, janela ou) Tj
+1 0 0 1 54.0 87.0 Tm (  jogo.) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 3388 >>
+stream
+BT
+/F2 12.0 Tf
+1 0 0 1 54.0 783.0 Tm (4. Divergencias entre diagrama e codigo) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 759.0 Tm (No diagrama | No codigo | Consequencia) Tj
+1 0 0 1 54.0 738.0 Tm (Pacote gui | Classes de interface estao em modelo. | A arquitetura real nao bate com o) Tj
+1 0 0 1 54.0 724.0 Tm (  diagrama.) Tj
+1 0 0 1 54.0 703.0 Tm (PainelJogo | Arquivo/classe PaineldoJogo. | Nome diferente dificulta rastrear relacoes) Tj
+1 0 0 1 54.0 689.0 Tm (  e pode gerar erro quando a GUI for implementada.) Tj
+1 0 0 1 54.0 668.0 Tm (InimigoRastreador | InimigoRastejador. | O nome nao corresponde ao diagrama nem ao) Tj
+1 0 0 1 54.0 654.0 Tm (  comportamento descrito de perseguidor.) Tj
+1 0 0 1 54.0 633.0 Tm (Bomba implements Runnable, ITemporizavel | Bomba apenas herda de ElementoMapa. | Faltam) Tj
+1 0 0 1 54.0 619.0 Tm (  tempo, tick, run e contrato temporizado.) Tj
+1 0 0 1 54.0 598.0 Tm (BlocoDestrutivo implements IDestrutivel | Nao implementa a interface. | O codigo nao) Tj
+1 0 0 1 54.0 584.0 Tm (  garante os metodos de destruicao.) Tj
+1 0 0 1 54.0 563.0 Tm (Classes Swing herdam de JFrame/JPanel | Classes GUI sao vazias e nao herdam de Swing. |) Tj
+1 0 0 1 54.0 549.0 Tm (  A interface grafica ainda nao existe funcionalmente.) Tj
+/F2 14.0 Tf
+1 0 0 1 54.0 520.0 Tm (Passo 3 - Informacoes Uteis para Corrigir) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 491.0 Tm (Ordem recomendada de correcao) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 467.0 Tm (- Corrigir o erro sintatico de Bomba.java.) Tj
+1 0 0 1 54.0 453.0 Tm (- Decidir o construtor padrao de ElementoMapa: ou todas as subclasses recebem Posicao,) Tj
+1 0 0 1 54.0 439.0 Tm (  ou ElementoMapa ganha um construtor vazio protegido.) Tj
+1 0 0 1 54.0 425.0 Tm (- Alinhar interfaces e excecoes, principalmente IMovel.mover e) Tj
+1 0 0 1 54.0 411.0 Tm (  MovimentoInvalidoException.) Tj
+1 0 0 1 54.0 397.0 Tm (- Implementar os metodos abstratos obrigatorios, especialmente getSimbolo\(\).) Tj
+1 0 0 1 54.0 383.0 Tm (- Fazer as herancas baterem com o diagrama: inimigos, bomba armadilha, itens, power-ups) Tj
+1 0 0 1 54.0 369.0 Tm (  e ranking.) Tj
+1 0 0 1 54.0 355.0 Tm (- Implementar Tabuleiro e Celula, porque o resto do jogo depende disso.) Tj
+1 0 0 1 54.0 341.0 Tm (- Implementar Jogo como controlador central.) Tj
+1 0 0 1 54.0 327.0 Tm (- Depois disso, integrar Main, GUI e persistencia.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 301.0 Tm (Comandos usados na verificacao) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 277.0 Tm (javac -d /tmp/bomberman-build $\(find src -name '*.java'\)) Tj
+1 0 0 1 54.0 256.0 Tm (Resultado: falha em Bomba.java por erro sintatico.) Tj
+1 0 0 1 54.0 235.0 Tm (javac -d /tmp/bomberman-build2 $\(find /tmp/bomberman-compile-check/src -name '*.java'\)) Tj
+1 0 0 1 54.0 214.0 Tm (Resultado: apos remover a virgula em copia temporaria, surgem cinco erros adicionais de) Tj
+1 0 0 1 54.0 200.0 Tm (  contrato/heranca.) Tj
+/F2 12.0 Tf
+1 0 0 1 54.0 174.0 Tm (Checklist para comparar codigo e diagrama) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 150.0 Tm (- Cada classe do diagrama existe no codigo?) Tj
+1 0 0 1 54.0 136.0 Tm (- O nome da classe esta igual ao diagrama?) Tj
+1 0 0 1 54.0 122.0 Tm (- O pacote esta igual ao diagrama?) Tj
+1 0 0 1 54.0 108.0 Tm (- As herancas estao implementadas com extends?) Tj
+1 0 0 1 54.0 94.0 Tm (- As interfaces estao implementadas com implements?) Tj
+1 0 0 1 54.0 80.0 Tm (- Todo metodo abstrato foi implementado nas classes concretas?) Tj
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 699 >>
+stream
+BT
+/F1 10.5 Tf
+1 0 0 1 54.0 788.0 Tm (- Os construtores chamam corretamente super\(...\)?) Tj
+1 0 0 1 54.0 774.0 Tm (- As excecoes checadas aparecem tambem nas interfaces, quando necessario?) Tj
+/F2 14.0 Tf
+1 0 0 1 54.0 745.0 Tm (Conclusao) Tj
+/F1 10.5 Tf
+1 0 0 1 54.0 721.0 Tm (O diagrama esta bem mais completo que o codigo atual e serve como um bom roteiro de) Tj
+1 0 0 1 54.0 707.0 Tm (  implementacao. Neste momento, o projeto ainda nao esta pronto para execucao real do) Tj
+1 0 0 1 54.0 693.0 Tm (  jogo: primeiro e necessario corrigir a compilacao, alinhar herancas/interfaces e) Tj
+1 0 0 1 54.0 679.0 Tm (  implementar as classes centrais Tabuleiro, Jogo, Jogador, Bomba e Personagem.) Tj
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 15 0 R >>
+endobj
+xref
+0 17
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000155 00000 n 
+0000000252 00000 n 
+0000000354 00000 n 
+0000003788 00000 n 
+0000003924 00000 n 
+0000007531 00000 n 
+0000007667 00000 n 
+0000011210 00000 n 
+0000011347 00000 n 
+0000015248 00000 n 
+0000015386 00000 n 
+0000018827 00000 n 
+0000018965 00000 n 
+0000019716 00000 n 
+trailer
+<< /Size 17 /Root 1 0 R >>
+startxref
+19854
+%%EOF
