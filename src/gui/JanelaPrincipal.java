@@ -1,4 +1,4 @@
-package modelo;
+package gui;
 
 public class JanelaPrincipal {
 
