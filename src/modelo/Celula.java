@@ -13,6 +13,10 @@ public class Celula {
         this.posicao = posicao;
     }
 
+    public Bloco getBloco() {
+        return bloco;
+    }
+
     public char getSimbolo() {
         if (bloco != null) {
             return bloco.getSimbolo();

@@ -300,6 +300,7 @@ package modelo {
         - tamanho: int
 
         + getCelula(p: Posicao): Celula
+        + getTamanho(): int
         + imprimir(): void
         + isLivre(p: Posicao): boolean
         + posicaoValida(p: Posicao): boolean
