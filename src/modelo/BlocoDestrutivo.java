@@ -3,7 +3,8 @@ package modelo;
 public class BlocoDestrutivo extends Bloco {
     private Item itemOculto;
 
-    BlocoDestrutivo(boolean transponivel) {
+    BlocoDestrutivo(boolean transponivel,Item itemOculto) {
+        this.itemOculto = itemOculto;
         super(transponivel);
     }
 
