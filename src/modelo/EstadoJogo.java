@@ -1,9 +1,5 @@
 package modelo;
 
 public enum EstadoJogo {
-    EM_ANDAMENTO,
-    VITORIA,
-    DERROTA
-
-
+    EM_ANDAMENTO, VITORIA, DERROTA
 }

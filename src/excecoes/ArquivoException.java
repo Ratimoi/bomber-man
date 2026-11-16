@@ -1,7 +1,7 @@
 package excecoes;
 
 public class ArquivoException extends JogoException {
-    ArquivoException() {
+    public ArquivoException() {
         super("Arquivo inválido ou inexistente\n");
     }
 }

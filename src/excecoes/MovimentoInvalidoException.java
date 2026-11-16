@@ -1,7 +1,7 @@
 package excecoes;
 
 public class MovimentoInvalidoException extends JogoException {
-    MovimentoInvalidoException() {
+    public MovimentoInvalidoException() {
         super("Movimento inválido\n");
     }
 }

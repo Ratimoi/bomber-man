@@ -1,7 +1,7 @@
 package excecoes;
 
 public class LimiteBombaException extends JogoException {
-    LimiteBombaException() {
+    public LimiteBombaException() {
         super("Limite de bomba foi atingido\n");
     }
 }

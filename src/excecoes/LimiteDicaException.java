@@ -1,7 +1,7 @@
 package excecoes;
 
 public class LimiteDicaException extends JogoException {
-    LimiteDicaException() {
+    public LimiteDicaException() {
         super("Limite de dicas foi atingido\n");
     }
 }
