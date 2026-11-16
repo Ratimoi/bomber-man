@@ -1,4 +1,10 @@
-package modelo;
+package modelo.bombas;
+
+import modelo.ElementoMapa;
+import modelo.Jogo;
+import modelo.Posicao;
+import modelo.Tabuleiro;
+import modelo.personagens.Jogador;
 
 public class Bomba extends ElementoMapa {
     private Jogador dono;

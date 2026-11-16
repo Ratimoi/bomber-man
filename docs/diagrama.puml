@@ -80,45 +80,148 @@ package javax.swing {
 }
 
 package modelo {
-    abstract class Bloco {
-        # transponivel: boolean
+    package blocos {
+        abstract class Bloco {
+            # transponivel: boolean
 
-        + isTransponivel(): boolean
+            + isTransponivel(): boolean
+        }
+
+        class BlocoDestrutivo {
+            - itemOculto: Item
+
+            + getItemOculto(): Item
+            + getSimbolo(): char
+            + isDestruido(): boolean
+        }
+
+        class BlocoIndestrutivo {
+            + getSimbolo(): char
+        }
     }
 
-    class BlocoDestrutivo {
-        - destruido: boolean
-        - itemOculto: Item
+    package bombas {
+        class Bomba {
+            - dono: Jogador
+            - jogo: Jogo
+            - raio: int
+            - tempoRestante: int
+            - tempoTotal: int
 
-        + getSimbolo(): char
-        + isDestruido(): boolean
-        + receberDano(tab: Tabuleiro): void
+            + explodir(tab: Tabuleiro): Explosao
+            + getSimbolo(): char
+            + getTempoRestante(): int
+            + naMetadeInicial(): boolean
+        }
+
+        class BombaArmadilha {
+            - bombaOriginal: Bomba
+            - simboloDisfarce: char
+
+            + getBombaOriginal(): Bomba
+            + getSimbolo(): char
+        }
+
+        class Explosao {
+            - celulasAtingidas: List<Posicao>
+            - origem: Posicao
+            - raio: int
+
+            + atinge(p: Posicao): boolean
+            + getCelulasAtingidas(): List<Posicao>
+            + propagar(tab: Tabuleiro): void
+        }
     }
 
-    class BlocoIndestrutivo {
-        + getSimbolo(): char
+    package inimigos {
+        abstract class Inimigo {
+            # jogo: Jogo
+            # pontos: int
+            # velocidade: int
+
+            + agir(tab: Tabuleiro, j: Jogador): void
+            + {abstract} decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+        }
+
+        class InimigoComum {
+            + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+            + getSimbolo(): char
+        }
+
+        class InimigoRastreador {
+            - perseguindo: boolean
+
+            + avistar(tab: Tabuleiro, j: Jogador): boolean
+            + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+            + getSimbolo(): char
+        }
+
+        class InimigoSabotador {
+            + agir(tab: Tabuleiro, j: Jogador): void
+            + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+            + desarmar(b: Bomba): BombaArmadilha
+            + getSimbolo(): char
+            + procurarBomba(tab: Tabuleiro): Bomba
+        }
     }
 
-    class Bomba {
-        - dono: Jogador
-        - jogo: Jogo
-        - raio: int
-        - tempoRestante: int
-        - tempoTotal: int
+    package itens {
+        abstract class Item {
+            # visivel: boolean
 
-        + explodir(tab: Tabuleiro): Explosao
-        + getSimbolo(): char
-        + getTempoRestante(): int
-        + naMetadeInicial(): boolean
-        + run(): void
-        + tick(): void
+            + {abstract} coletar(j: Jogador, jogo: Jogo): void
+            + revelar(): void
+        }
+
+        class PortaSaida {
+            - aberta: boolean
+
+            + abrir(): void
+            + coletar(j: Jogador, jogo: Jogo): void
+            + getSimbolo(): char
+        }
+
+        abstract class PowerUp {
+            + {abstract} aplicar(j: Jogador): void
+            + coletar(j: Jogador, jogo: Jogo): void
+        }
+
+        class PowerUpBomba {
+            + aplicar(j: Jogador): void
+            + getSimbolo(): char
+        }
+
+        class PowerUpRaio {
+            + aplicar(j: Jogador): void
+            + getSimbolo(): char
+        }
     }
 
-    class BombaArmadilha {
-        - disfarce: Bloco
+    package personagens {
+        abstract class Personagem {
+            # vivo: boolean
 
-        + detonar(tab: Tabuleiro): Explosao
-        + getSimbolo(): char
+            + isDestruido(): boolean
+            + mover(dir: Direcao, tab: Tabuleiro): void
+            + receberDano(tab: Tabuleiro): void
+        }
+
+        class Jogador {
+            - bombasAtivas: int
+            - maxBombas: int
+            - nome: String
+            - pontuacao: int
+            - raioExplosao: int
+            - vidas: int
+
+            + aumentarBomba(): void
+            + aumentarRaio(): void
+            + aumentarVida(): void
+            + getSimbolo(): char
+            + liberarBomba(): void
+            + perdeVida(): void
+            + plantarBomba(): void
+        }
     }
 
     class Celula {
@@ -127,9 +230,14 @@ package modelo {
         - item: Item
         - posicao: Posicao
 
+        + getBloco(): Bloco
+        + getBomba(): Bomba
         + getSimbolo(): char
         + isTransponivel(): boolean
         + removerBloco(): void
+        + removerBomba(): void
+        + setBloco(bloco: Bloco): void
+        + setItem(item: Item): void
     }
 
     enum Dificuldade {
@@ -150,8 +258,8 @@ package modelo {
         - dColuna: int
         - dLinha: int
 
-        + getDColuna(): int
-        + getDLinha(): int
+        + getdColuna(): int
+        + getdLinha(): int
     }
 
     abstract class ElementoMapa {
@@ -168,74 +276,12 @@ package modelo {
         DERROTA
     }
 
-    class Explosao {
-        - celulasAtingidas: ArrayList<Posicao>
-        - origem: Posicao
-        - raio: int
-
-        + atinge(p: Posicao): boolean
-        + propagar(tab: Tabuleiro): void
-    }
-
-    abstract class Inimigo {
-        # jogo: Jogo
-        # pontos: int
-        # velocidade: int
-
-        + agir(tab: Tabuleiro, j: Jogador): void
-        + {abstract} decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
-        + run(): void
-    }
-
-    class InimigoComum {
-        + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
-        + getSimbolo(): char
-    }
-
-    class InimigoRastreador {
-        - perseguindo: boolean
-
-        + avistarJogador(tab: Tabuleiro, j: Jogador): boolean
-        + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
-        + getSimbolo(): char
-    }
-
-    class InimigoSabotador {
-        + decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
-        + desarmar(b: Bomba): BombaArmadilha
-        + getSimbolo(): char
-        + procurarBomba(tab: Tabuleiro): Bomba
-    }
-
-    abstract class Item {
-        # visivel: boolean
-
-        + {abstract} coletar(j: Jogador, jogo: Jogo): void
-        + revelar(): void
-    }
-
-    class Jogador {
-        - bombasAtivas: int
-        - maxBombas: int
-        - nome: String
-        - pontuacao: int
-        - raioExplosao: int
-        - vidas: int
-
-        + aumentarMaxBombas(): void
-        + aumentarRaio(): void
-        + getSimbolo(): char
-        + liberarBomba(): void
-        + perderVida(): void
-        + plantarBomba(): Bomba
-    }
-
     class Jogo {
-        - bombas: ArrayList<Bomba>
+        - bombas: Bomba[]
         - dicasRestantes: int
         - dificuldade: Dificuldade
         - estado: EstadoJogo
-        - inimigos: ArrayList<Inimigo>
+        - inimigos: Inimigo[]
         - jogador: Jogador
         - modoDebug: boolean
         - tabuleiro: Tabuleiro
@@ -252,24 +298,10 @@ package modelo {
         + processarTurno(cmd: char): void
         + reiniciarFase(): void
         + reiniciarJogo(): void
+        + todosInimigosDerrotados(): boolean
+        + vencer(): void
         + verificarColisoes(): void
         + verificarFimJogo(): boolean
-    }
-
-    abstract class Personagem {
-        # vivo: boolean
-
-        + isDestruido(): boolean
-        + mover(dir: Direcao, tab: Tabuleiro): void
-        + receberDano(tab: Tabuleiro): void
-    }
-
-    class PortaSaida {
-        - aberta: boolean
-
-        + abrir(): void
-        + coletar(j: Jogador, jogo: Jogo): void
-        + getSimbolo(): char
     }
 
     class Posicao {
@@ -278,21 +310,6 @@ package modelo {
 
         + getColuna(): int
         + getLinha(): int
-    }
-
-    abstract class PowerUp {
-        + {abstract} aplicar(j: Jogador): void
-        + coletar(j: Jogador, jogo: Jogo): void
-    }
-
-    class PowerUpBomba {
-        + aplicar(j: Jogador): void
-        + getSimbolo(): char
-    }
-
-    class PowerUpRaio {
-        + aplicar(j: Jogador): void
-        + getSimbolo(): char
     }
 
     class Tabuleiro {
@@ -344,12 +361,11 @@ ArquivoException <.. GerenciadorArquivo : lança
 
 Bloco <|-- BlocoDestrutivo
 Bloco <|-- BlocoIndestrutivo
+Bloco <|-- BombaArmadilha
 
 BlocoDestrutivo o-- "0..1" Item : esconde
 
-Bomba <|-- BombaArmadilha
-
-BombaArmadilha o-- "1" Bloco : disfarce
+BombaArmadilha o-- "1" Bomba : bombaOriginal
 BombaArmadilha <.. InimigoSabotador : cria
 
 Celula o-- "0..1" Bloco
@@ -373,12 +389,16 @@ Exception <|-- JogoException
 
 Explosao <.. Bomba : cria
 Explosao *-- "1..*" Posicao
+Explosao ..> Bloco : consulta
+Explosao ..> BlocoDestrutivo : destrói
+Explosao ..> BlocoIndestrutivo : para
+Explosao ..> BombaArmadilha : detona em cadeia
+Explosao ..> Item : revela
 
 GeradorMapa <.. Jogo : usa
 
 GerenciadorArquivo <.. Jogo : usa
 
-IDestrutivel <|.. BlocoDestrutivo
 IDestrutivel <|.. Personagem
 
 IMovel <|.. Personagem
@@ -389,8 +409,6 @@ Inimigo <|-- InimigoSabotador
 
 Item <|-- PortaSaida
 Item <|-- PowerUp
-
-ITemporizavel <|.. Bomba
 
 JanelaPrincipal <.. Main : cria
 JanelaPrincipal *-- "1" PainelJogo
@@ -424,15 +442,13 @@ MovimentoInvalidoException <.. Personagem : lança
 
 Personagem <|-down- Inimigo
 Personagem <|-- Jogador
+Personagem ..> BombaArmadilha : detona ao encostar
 
 PowerUp <|-- PowerUpBomba
 PowerUp <|-- PowerUpRaio
 
 Ranking <.. GerenciadorArquivo : usa
 Ranking *-- "0..*" RegistroRanking
-
-Runnable <|.. Bomba
-Runnable <|.. Inimigo
 
 Tabuleiro *-- "*" Celula
 note on link: matriz n x n

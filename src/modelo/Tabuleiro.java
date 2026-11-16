@@ -4,7 +4,7 @@ public class Tabuleiro {
     private Celula[][] celulas;
     private int tamanho;
 
-    Tabuleiro(int tamanho) {
+    public Tabuleiro(int tamanho) {
         this.celulas = new Celula[tamanho][tamanho];
         this.tamanho = tamanho;
 

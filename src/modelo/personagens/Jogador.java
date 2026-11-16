@@ -1,6 +1,7 @@
-package modelo;
+package modelo.personagens;
 
 import excecoes.LimiteBombaException;
+import modelo.Posicao;
 
 public class Jogador extends Personagem {
     private int bombasAtivas;
@@ -26,6 +27,10 @@ public class Jogador extends Personagem {
 
     public void aumentarRaio() {
         raioExplosao++;
+    }
+
+    public void aumentarBomba() {
+        maxBombas++;
     }
 
     public char getSimbolo() {

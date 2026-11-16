@@ -1,7 +1,16 @@
-package modelo;
+package modelo.bombas;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import modelo.Celula;
+import modelo.Direcao;
+import modelo.Posicao;
+import modelo.Tabuleiro;
+import modelo.blocos.Bloco;
+import modelo.blocos.BlocoDestrutivo;
+import modelo.blocos.BlocoIndestrutivo;
+import modelo.itens.Item;
 
 public class Explosao {
     private List<Posicao> celulasAtingidas;
@@ -59,7 +68,16 @@ public class Explosao {
                 }
 
                 if (bloco instanceof BlocoDestrutivo) {
+                    BlocoDestrutivo destrutivo = (BlocoDestrutivo) bloco;
+                    Item itemOculto = destrutivo.getItemOculto();
+
                     celula.removerBloco();
+
+                    if (itemOculto != null) {
+                        itemOculto.revelar();
+                        celula.setItem(itemOculto);
+                    }
+
                     celulasAtingidas.add(posicaoAtual);
                     break;
                 } else if (bloco == null) {

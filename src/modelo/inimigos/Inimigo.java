@@ -1,6 +1,12 @@
-package modelo;
+package modelo.inimigos;
 
 import excecoes.MovimentoInvalidoException;
+import modelo.Direcao;
+import modelo.Jogo;
+import modelo.Posicao;
+import modelo.Tabuleiro;
+import modelo.personagens.Jogador;
+import modelo.personagens.Personagem;
 
 abstract public class Inimigo extends Personagem {
     protected Jogo jogo;

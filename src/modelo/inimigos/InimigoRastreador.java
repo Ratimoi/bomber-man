@@ -1,6 +1,11 @@
-package modelo;
+package modelo.inimigos;
 
 import java.util.Random;
+
+import modelo.Direcao;
+import modelo.Posicao;
+import modelo.Tabuleiro;
+import modelo.personagens.Jogador;
 
 public class InimigoRastreador extends Inimigo {
     private boolean perseguindo;
@@ -26,7 +31,7 @@ public class InimigoRastreador extends Inimigo {
                     break;
                 }
 
-                if (posicaoAtual.getColuna() == j.posicao.getColuna() && posicaoAtual.getLinha() == j.posicao.getLinha()) {
+                if (posicaoAtual.getColuna() == j.getPosicao().getColuna() && posicaoAtual.getLinha() == j.getPosicao().getLinha()) {
                     return this.perseguindo = true;
                 }
             }

@@ -1,5 +1,9 @@
 package modelo;
 
+import modelo.blocos.Bloco;
+import modelo.bombas.Bomba;
+import modelo.itens.Item;
+
 public class Celula {
     private Bloco bloco;
     private Bomba bomba;
@@ -47,5 +51,9 @@ public class Celula {
 
     public void setBloco(Bloco bloco) {
         this.bloco = bloco;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }

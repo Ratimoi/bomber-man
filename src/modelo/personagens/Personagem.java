@@ -1,13 +1,19 @@
-package modelo;
+package modelo.personagens;
 
 import excecoes.MovimentoInvalidoException;
 import interfaces.IDestrutivel;
 import interfaces.IMovel;
+import modelo.Direcao;
+import modelo.ElementoMapa;
+import modelo.Posicao;
+import modelo.Tabuleiro;
+import modelo.blocos.Bloco;
+import modelo.bombas.BombaArmadilha;
 
 abstract public class Personagem extends ElementoMapa implements IMovel, IDestrutivel {
     protected boolean vivo;
 
-    Personagem(Posicao posicao) {
+    protected Personagem(Posicao posicao) {
         super(posicao);
         this.vivo = true;
     }

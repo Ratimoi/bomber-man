@@ -1,14 +1,17 @@
-package modelo;
+package modelo.blocos;
+
+import modelo.ElementoMapa;
+import modelo.Posicao;
 
 abstract public class Bloco extends ElementoMapa {
     protected boolean transponivel;
 
-    Bloco(Posicao posicao, boolean transponivel) {
+    protected Bloco(Posicao posicao, boolean transponivel) {
         super(posicao);
         this.transponivel = transponivel;
     }
 
     public boolean isTransponivel() {
-        return false;
+        return transponivel;
     }
 }

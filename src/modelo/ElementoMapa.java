@@ -3,7 +3,7 @@ package modelo;
 abstract public class ElementoMapa {
     protected Posicao posicao;
 
-    ElementoMapa(Posicao posicao) {
+    protected ElementoMapa(Posicao posicao) {
         this.posicao = posicao;
     }
 

@@ -1,6 +1,14 @@
-package modelo;
+package modelo.inimigos;
 
 import java.util.Random;
+
+import modelo.Celula;
+import modelo.Direcao;
+import modelo.Posicao;
+import modelo.Tabuleiro;
+import modelo.bombas.Bomba;
+import modelo.bombas.BombaArmadilha;
+import modelo.personagens.Jogador;
 
 public class InimigoSabotador extends Inimigo {
     InimigoSabotador(Posicao posicao) {

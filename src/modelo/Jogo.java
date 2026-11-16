@@ -1,5 +1,9 @@
 package modelo;
 
+import modelo.bombas.Bomba;
+import modelo.inimigos.Inimigo;
+import modelo.personagens.Jogador;
+
 public class Jogo {
     private Bomba[] bombas;
     private int dicasRestantes;
@@ -65,6 +69,19 @@ public class Jogo {
 
     public void verificarColisoes() {
 
+    }
+
+    public boolean todosInimigosDerrotados() {
+        for (Inimigo inimigo : Inimigos) {
+            if (!inimigo.isDestruido()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void vencer() {
+        this.estado = EstadoJogo.VITORIA;
     }
 
     public boolean verificarFimJogo() {

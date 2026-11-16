@@ -1,4 +1,6 @@
-package modelo;
+package modelo.blocos;
+
+import modelo.Posicao;
 
 public class BlocoIndestrutivo extends Bloco {
     BlocoIndestrutivo(Posicao posicao, boolean transponivel) {

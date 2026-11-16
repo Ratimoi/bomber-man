@@ -1,6 +1,11 @@
-package modelo;
+package modelo.inimigos;
 
 import java.util.Random;
+
+import modelo.Direcao;
+import modelo.Posicao;
+import modelo.Tabuleiro;
+import modelo.personagens.Jogador;
 
 public class InimigoComum extends Inimigo {
     InimigoComum(Posicao posicao) {

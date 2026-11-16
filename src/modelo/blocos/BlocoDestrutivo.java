@@ -1,4 +1,7 @@
-package modelo;
+package modelo.blocos;
+
+import modelo.Posicao;
+import modelo.itens.Item;
 
 public class BlocoDestrutivo extends Bloco {
     private Item itemOculto;
@@ -10,6 +13,10 @@ public class BlocoDestrutivo extends Bloco {
 
     public char getSimbolo() {
         return '#';
+    }
+
+    public Item getItemOculto() {
+        return itemOculto;
     }
 
     public boolean isDestruido() {
