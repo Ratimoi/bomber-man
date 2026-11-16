@@ -1,4 +1,21 @@
 package modelo;
 
-public class BombaArmadilha {
+public class BombaArmadilha extends Bloco {
+    private Bomba bombaOriginal;
+    private char simboloDisfarce;
+
+    BombaArmadilha(Posicao posicao, Bomba bombaOriginal, char simboloDisfarce) {
+        super(posicao, false);
+        this.bombaOriginal = bombaOriginal;
+        this.simboloDisfarce = simboloDisfarce;
+    }
+
+    @Override
+    public char getSimbolo() {
+        return simboloDisfarce;
+    }
+
+    public Bomba getBombaOriginal() {
+        return bombaOriginal;
+    }
 }

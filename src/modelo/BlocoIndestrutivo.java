@@ -1,11 +1,11 @@
 package modelo;
 
 public class BlocoIndestrutivo extends Bloco {
-    BlocoIndestrutivo(boolean transponivel) {
-        super(transponivel);
+    BlocoIndestrutivo(Posicao posicao, boolean transponivel) {
+        super(posicao, transponivel);
     }
 
     public char getSimbolo() {
-        return '#';
+        return '█';
     }
 }

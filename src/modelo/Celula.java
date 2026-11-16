@@ -17,6 +17,10 @@ public class Celula {
         return bloco;
     }
 
+    public Bomba getBomba() {
+        return bomba;
+    }
+
     public char getSimbolo() {
         if (bloco != null) {
             return bloco.getSimbolo();
@@ -35,5 +39,13 @@ public class Celula {
 
     public void removerBloco() {
         bloco = null;
+    }
+
+    public void removerBomba() {
+        bomba = null;
+    }
+
+    public void setBloco(Bloco bloco) {
+        this.bloco = bloco;
     }
 }

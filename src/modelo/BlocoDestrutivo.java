@@ -3,16 +3,16 @@ package modelo;
 public class BlocoDestrutivo extends Bloco {
     private Item itemOculto;
 
-    BlocoDestrutivo(boolean transponivel,Item itemOculto) {
+    BlocoDestrutivo(Posicao posicao, boolean transponivel, Item itemOculto) {
+        super(posicao, transponivel);
         this.itemOculto = itemOculto;
-        super(transponivel);
     }
 
     public char getSimbolo() {
-        return 'C';
+        return '#';
     }
 
     public boolean isDestruido() {
-        return false;
+        return true;
     }
 }

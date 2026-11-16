@@ -1,5 +1,7 @@
 package modelo;
 
+import excecoes.MovimentoInvalidoException;
+
 abstract public class Inimigo extends Personagem {
     protected Jogo jogo;
     protected int pontos;
@@ -12,7 +14,13 @@ abstract public class Inimigo extends Personagem {
     }
 
     public void agir(Tabuleiro tab, Jogador j) {
+        Direcao dir = decidirMovimento(tab, j);
 
+        try {
+            this.mover(dir, tab);
+        } catch (MovimentoInvalidoException ignored) {
+
+        }
     }
 
     abstract public Direcao decidirMovimento(Tabuleiro tab, Jogador j);

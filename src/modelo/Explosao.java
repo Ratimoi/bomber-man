@@ -25,6 +25,10 @@ public class Explosao {
         return false;
     }
 
+    public List<Posicao> getCelulasAtingidas() {
+        return celulasAtingidas;
+    }
+
     public void propagar(Tabuleiro tab) {
         for (Direcao dir : Direcao.values()) {
             for (int passo = 1; passo <= raio; passo++) {
@@ -32,20 +36,33 @@ public class Explosao {
                 int coluna = origem.getColuna() + dir.getdColuna() * passo;
 
                 Posicao posicaoAtual = new Posicao(coluna, linha);
+                Celula celula = tab.getCelula(posicaoAtual);
 
-                if (tab.getCelula(posicaoAtual) == null) {
+                if (celula == null) {
                     break;
                 }
 
-                if (tab.getCelula(posicaoAtual).getBloco() instanceof BlocoIndestrutivo) {
+                Bloco bloco = celula.getBloco();
+
+                if (bloco instanceof BlocoIndestrutivo) {
                     break;
                 }
 
-                if (tab.getCelula(posicaoAtual).getBloco() instanceof BlocoDestrutivo) {
-                    tab.getCelula(posicaoAtual).removerBloco();
+                if (bloco instanceof BombaArmadilha) {
+                    BombaArmadilha armadilha = (BombaArmadilha) bloco;
+                    Explosao explosaoEmCadeia = armadilha.getBombaOriginal().explodir(tab);
+
+                    celula.removerBloco();
+                    celulasAtingidas.add(posicaoAtual);
+                    celulasAtingidas.addAll(explosaoEmCadeia.getCelulasAtingidas());
+                    break;
+                }
+
+                if (bloco instanceof BlocoDestrutivo) {
+                    celula.removerBloco();
                     celulasAtingidas.add(posicaoAtual);
                     break;
-                } else if (tab.getCelula(posicaoAtual).getBloco() == null) {
+                } else if (bloco == null) {
                     celulasAtingidas.add(posicaoAtual);
                 }
             }
