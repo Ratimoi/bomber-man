@@ -6,7 +6,7 @@ import modelo.itens.Item;
 public class BlocoDestrutivo extends Bloco {
     private Item itemOculto;
 
-    BlocoDestrutivo(Posicao posicao, boolean transponivel, Item itemOculto) {
+    public BlocoDestrutivo(Posicao posicao, boolean transponivel, Item itemOculto) {
         super(posicao, transponivel);
         this.itemOculto = itemOculto;
     }

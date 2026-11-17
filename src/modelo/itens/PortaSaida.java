@@ -7,7 +7,7 @@ import modelo.personagens.Jogador;
 public class PortaSaida extends Item {
     private boolean aberta;
 
-    PortaSaida(Posicao posicao) {
+    public PortaSaida(Posicao posicao) {
         super(posicao);
         aberta = false;
     }

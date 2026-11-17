@@ -29,5 +29,9 @@ abstract public class Inimigo extends Personagem {
         }
     }
 
+    public int getPontos() {
+        return pontos;
+    }
+
     abstract public Direcao decidirMovimento(Tabuleiro tab, Jogador j);
 }

@@ -3,38 +3,101 @@ package modelo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
+import excecoes.ArquivoException;
 import excecoes.LimiteBombaException;
 import excecoes.MovimentoInvalidoException;
 import modelo.bombas.Bomba;
 import modelo.bombas.Explosao;
 import modelo.inimigos.Inimigo;
-import modelo.inimigos.InimigoComum;
 import modelo.itens.Item;
 import modelo.itens.PortaSaida;
 import modelo.personagens.Jogador;
+import persistencia.GeradorMapa;
 
 public class Jogo {
+    private static final int TAMANHO_PADRAO = 11;
+
     private Bomba[] bombas;
     private int dicasRestantes;
     private Dificuldade dificuldade;
     private EstadoJogo estado;
+    private long inicioMs;
     private Inimigo[] inimigos;
     private Jogador jogador;
     private boolean modoDebug;
+    private String nomeJogador;
+    private long semente;
     private Tabuleiro tabuleiro;
+    private long tempoAnteriorMs;
     private int turno;
 
-    public Jogo(Dificuldade dificuldade) {
+    public Jogo(Dificuldade dificuldade, String nomeJogador) {
         this.dificuldade = dificuldade;
+        this.nomeJogador = nomeJogador;
     }
 
     public void alternarDebug() {
         this.modoDebug = !this.modoDebug;
     }
 
+    public Bomba[] getBombas() {
+        return bombas.clone();
+    }
+
+    public int getDicasRestantes() {
+        return dicasRestantes;
+    }
+
+    public Dificuldade getDificuldade() {
+        return dificuldade;
+    }
+
     public EstadoJogo getEstado() {
         return estado;
+    }
+
+    public Inimigo[] getInimigos() {
+        return inimigos.clone();
+    }
+
+    public Jogador getJogador() {
+        return jogador;
+    }
+
+    public long getSemente() {
+        return semente;
+    }
+
+    public Tabuleiro getTabuleiro() {
+        return tabuleiro;
+    }
+
+    public long getTempoSegundos() {
+        return (tempoAnteriorMs + System.currentTimeMillis() - inicioMs) / 1000;
+    }
+
+    public int getTurno() {
+        return turno;
+    }
+
+    public boolean isModoDebug() {
+        return modoDebug;
+    }
+
+    public void restaurar(Tabuleiro tabuleiro, Jogador jogador, List<Inimigo> inimigos, List<Bomba> bombas, int turno, int dicasRestantes, boolean modoDebug, long semente, long tempoSegundos) {
+        this.tabuleiro = tabuleiro;
+        this.jogador = jogador;
+        this.inimigos = inimigos.toArray(new Inimigo[0]);
+        this.bombas = bombas.toArray(new Bomba[0]);
+        this.turno = turno;
+        this.dicasRestantes = dicasRestantes;
+        this.modoDebug = modoDebug;
+        this.semente = semente;
+        this.estado = EstadoJogo.EM_ANDAMENTO;
+        this.tempoAnteriorMs = tempoSegundos * 1000;
+        this.inicioMs = System.currentTimeMillis();
     }
 
     public void imprimir() {
@@ -95,6 +158,7 @@ public class Jogo {
         for (Inimigo inimigo : inimigos) {
             if (!inimigo.isDestruido() && explosao.atinge(inimigo.getPosicao())) {
                 inimigo.receberDano(this.tabuleiro);
+                jogador.adicionarPontos(inimigo.getPontos());
             }
         }
     }
@@ -129,26 +193,34 @@ public class Jogo {
     }
 
     private void montarFase() {
-        int tamanho = 11;
-        this.tabuleiro = new Tabuleiro(tamanho);
+        GeradorMapa gerador = new GeradorMapa(this.semente);
 
-        int quantidade = dificuldade.getQuantidadeInimigos();
-        this.inimigos = new Inimigo[quantidade];
-        for (int i = 0; i < quantidade; i++) {
-            Posicao posicaoInimigo = new Posicao(tamanho - 1, tamanho - 1);
-            this.inimigos[i] = new InimigoComum(posicaoInimigo);
+        try {
+            this.tabuleiro = gerador.carregarArquivo(dificuldade.getArquivoMapa());
+            gerador.espalharCaixotes(this.tabuleiro, dificuldade);
+            gerador.espalharItens(this.tabuleiro);
+        } catch (ArquivoException e) {
+            this.tabuleiro = gerador.gerar(TAMANHO_PADRAO, dificuldade);
         }
 
+        this.inimigos = gerador.espalharInimigos(this.tabuleiro, dificuldade).toArray(new Inimigo[0]);
         this.bombas = new Bomba[0];
         this.turno = 0;
     }
 
-    public void iniciar() {
+    private void comecar() {
         montarFase();
 
-        this.jogador = new Jogador(new Posicao(0, 0), "Jogador");
+        this.jogador = new Jogador(new Posicao(0, 0), nomeJogador);
         this.dicasRestantes = 3;
         this.estado = EstadoJogo.EM_ANDAMENTO;
+        this.tempoAnteriorMs = 0;
+        this.inicioMs = System.currentTimeMillis();
+    }
+
+    public void iniciar() {
+        this.semente = new Random().nextLong();
+        comecar();
     }
 
     public void moverInimigos() {
@@ -215,7 +287,7 @@ public class Jogo {
     }
 
     public void reiniciarJogo() {
-        iniciar();
+        comecar();
     }
 
     public void verificarColisoes() {

@@ -11,7 +11,7 @@ import modelo.bombas.BombaArmadilha;
 import modelo.personagens.Jogador;
 
 public class InimigoSabotador extends Inimigo {
-    InimigoSabotador(Posicao posicao) {
+    public InimigoSabotador(Posicao posicao) {
         super(posicao, 15, 1);
     }
 

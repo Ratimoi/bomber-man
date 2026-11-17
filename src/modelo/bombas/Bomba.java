@@ -32,12 +32,20 @@ public class Bomba extends ElementoMapa {
         return dono;
     }
 
+    public int getRaio() {
+        return raio;
+    }
+
     public char getSimbolo(){
         return 'B';
     }
 
     public int getTempoRestante() {
         return tempoRestante;
+    }
+
+    public int getTempoTotal() {
+        return tempoTotal;
     }
 
     public boolean naMetadeInicial() {

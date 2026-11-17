@@ -3,7 +3,7 @@ package modelo.blocos;
 import modelo.Posicao;
 
 public class BlocoIndestrutivo extends Bloco {
-    BlocoIndestrutivo(Posicao posicao, boolean transponivel) {
+    public BlocoIndestrutivo(Posicao posicao, boolean transponivel) {
         super(posicao, transponivel);
     }
 

@@ -10,7 +10,7 @@ import modelo.personagens.Jogador;
 public class InimigoRastreador extends Inimigo {
     private boolean perseguindo;
 
-    InimigoRastreador(Posicao posicao) {
+    public InimigoRastreador(Posicao posicao) {
         super(posicao, 10, 2);
         perseguindo = false;
     }

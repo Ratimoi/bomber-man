@@ -13,13 +13,21 @@ public class Jogador extends Personagem {
     private int vidas;
 
     public Jogador(Posicao posicao, String nome) {
+        this(posicao, nome, 3, 1, 0, 1, 0);
+    }
+
+    public Jogador(Posicao posicao, String nome, int vidas, int maxBombas, int bombasAtivas, int raioExplosao, int pontuacao) {
         super(posicao);
-        bombasAtivas = 0;
-        maxBombas = 1;
         this.nome = nome;
-        pontuacao = 0;
-        raioExplosao = 1;
-        vidas = 3;
+        this.vidas = vidas;
+        this.maxBombas = maxBombas;
+        this.bombasAtivas = bombasAtivas;
+        this.raioExplosao = raioExplosao;
+        this.pontuacao = pontuacao;
+    }
+
+    public void adicionarPontos(int pontos) {
+        pontuacao += pontos;
     }
 
     public void aumentarVida() {
@@ -36,6 +44,22 @@ public class Jogador extends Personagem {
 
     public char getSimbolo() {
         return 'P';
+    }
+
+    public int getBombasAtivas() {
+        return bombasAtivas;
+    }
+
+    public int getMaxBombas() {
+        return maxBombas;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getPontuacao() {
+        return pontuacao;
     }
 
     public int getRaioExplosao() {

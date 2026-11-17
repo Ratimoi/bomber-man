@@ -4,7 +4,7 @@ import modelo.Posicao;
 import modelo.personagens.Jogador;
 
 public class PowerUpRaio extends PowerUp {
-    PowerUpRaio(Posicao posicao) {
+    public PowerUpRaio(Posicao posicao) {
         super(posicao);
     }
 

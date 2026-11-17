@@ -1,17 +1,27 @@
 package persistencia;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Ranking {
-    private RegistroRanking[] registros;
+    private ArrayList<RegistroRanking> registros;
 
-    public void adicionar(RegistroRanking r) {
-
+    public Ranking() {
+        this.registros = new ArrayList<>();
     }
 
-    public RegistroRanking[] getTop10() {
-        RegistroRanking[] top10 = new RegistroRanking[10];
+    public void adicionar(RegistroRanking r) {
+        registros.add(r);
+        Collections.sort(registros);
+    }
 
-        System.arraycopy(this.registros, 0, top10, 0, 10);
+    public ArrayList<RegistroRanking> getRegistros() {
+        return new ArrayList<>(registros);
+    }
 
-        return top10;
+    public ArrayList<RegistroRanking> getTop10() {
+        int limite = Math.min(10, registros.size());
+
+        return new ArrayList<>(registros.subList(0, limite));
     }
 }

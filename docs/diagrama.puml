@@ -109,9 +109,13 @@ package modelo {
             - tempoTotal: int
 
             + explodir(tab: Tabuleiro): Explosao
+            + getDono(): Jogador
+            + getRaio(): int
             + getSimbolo(): char
             + getTempoRestante(): int
+            + getTempoTotal(): int
             + naMetadeInicial(): boolean
+            + tickar(): void
         }
 
         class BombaArmadilha {
@@ -141,6 +145,7 @@ package modelo {
 
             + agir(tab: Tabuleiro, j: Jogador): void
             + {abstract} decidirMovimento(tab: Tabuleiro, j: Jogador): Direcao
+            + getPontos(): int
         }
 
         class InimigoComum {
@@ -179,6 +184,7 @@ package modelo {
             + abrir(): void
             + coletar(j: Jogador, jogo: Jogo): void
             + getSimbolo(): char
+            + isAberta(): boolean
         }
 
         abstract class PowerUp {
@@ -214,10 +220,17 @@ package modelo {
             - raioExplosao: int
             - vidas: int
 
+            + adicionarPontos(pontos: int): void
             + aumentarBomba(): void
             + aumentarRaio(): void
             + aumentarVida(): void
+            + getBombasAtivas(): int
+            + getMaxBombas(): int
+            + getNome(): String
+            + getPontuacao(): int
+            + getRaioExplosao(): int
             + getSimbolo(): char
+            + getVidas(): int
             + liberarBomba(): void
             + perdeVida(): void
             + plantarBomba(): void
@@ -232,11 +245,13 @@ package modelo {
 
         + getBloco(): Bloco
         + getBomba(): Bomba
+        + getItem(): Item
         + getSimbolo(): char
         + isTransponivel(): boolean
         + removerBloco(): void
         + removerBomba(): void
         + setBloco(bloco: Bloco): void
+        + setBomba(bomba: Bomba): void
         + setItem(item: Item): void
     }
 
@@ -245,8 +260,12 @@ package modelo {
         MEDIO
         DIFICIL
         - arquivoMapa: String
+        - densidadeCaixotes: double
         - quantidadeInimigos: int
 
+        + getArquivoMapa(): String
+        + getDensidadeCaixotes(): double
+        + getQuantidadeInimigos(): int
         + temSabotador(): boolean
     }
 
@@ -281,16 +300,32 @@ package modelo {
         - dicasRestantes: int
         - dificuldade: Dificuldade
         - estado: EstadoJogo
+        - inicioMs: long
         - inimigos: Inimigo[]
         - jogador: Jogador
         - modoDebug: boolean
+        - nomeJogador: String
+        - semente: long
         - tabuleiro: Tabuleiro
+        - tempoAnteriorMs: long
         - turno: int
 
         + alternarDebug(): void
         + atualizarBombas(): void
         + esperar(): void
+        + getBombas(): Bomba[]
+        + getDicasRestantes(): int
+        + getDificuldade(): Dificuldade
+        + getEstado(): EstadoJogo
+        + getInimigos(): Inimigo[]
+        + getJogador(): Jogador
+        + getSemente(): long
+        + getTabuleiro(): Tabuleiro
+        + getTempoSegundos(): long
+        + getTurno(): int
+        + imprimir(): void
         + iniciar(): void
+        + isModoDebug(): boolean
         + moverInimigos(): void
         + moverJogador(dir: Direcao): void
         + pedirDica(): String
@@ -298,6 +333,7 @@ package modelo {
         + processarTurno(cmd: char): void
         + reiniciarFase(): void
         + reiniciarJogo(): void
+        + restaurar(tab: Tabuleiro, j: Jogador, inimigos: List<Inimigo>, bombas: List<Bomba>, turno: int, dicas: int, debug: boolean, semente: long, tempo: long): void
         + todosInimigosDerrotados(): boolean
         + vencer(): void
         + verificarColisoes(): void
@@ -326,14 +362,19 @@ package modelo {
 
 package persistencia {
     class GeradorMapa {
+        - random: Random
+
         + carregarArquivo(caminho: String): Tabuleiro
-        + espalharCaixotes(tab: Tabuleiro): void
+        + espalharCaixotes(tab: Tabuleiro, dif: Dificuldade): void
         + espalharInimigos(tab: Tabuleiro, dif: Dificuldade): ArrayList<Inimigo>
         + espalharItens(tab: Tabuleiro): void
         + gerar(tamanho: int, dif: Dificuldade): Tabuleiro
     }
 
     class GerenciadorArquivo {
+        + {static} CAMINHO_RANKING: String
+        + {static} CAMINHO_SAVE: String
+
         + carregarJogo(caminho: String): Jogo
         + carregarRanking(): Ranking
         + salvarJogo(jogo: Jogo, caminho: String): void
@@ -344,6 +385,7 @@ package persistencia {
         - registros: ArrayList<RegistroRanking>
 
         + adicionar(r: RegistroRanking): void
+        + getRegistros(): ArrayList<RegistroRanking>
         + getTop10(): ArrayList<RegistroRanking>
     }
 
@@ -353,6 +395,9 @@ package persistencia {
         - tempoSegundos: long
 
         + compareTo(o: RegistroRanking): int
+        + getNome(): String
+        + getPontuacao(): int
+        + getTempoSegundos(): long
     }
 }
 
@@ -396,8 +441,14 @@ Explosao ..> BombaArmadilha : detona em cadeia
 Explosao ..> Item : revela
 
 GeradorMapa <.. Jogo : usa
+GeradorMapa ..> Tabuleiro : gera
+GeradorMapa ..> BlocoIndestrutivo : cria
+GeradorMapa ..> BlocoDestrutivo : cria
+GeradorMapa ..> Item : esconde
+GeradorMapa ..> Inimigo : cria
 
-GerenciadorArquivo <.. Jogo : usa
+GerenciadorArquivo ..> Jogo : salva e carrega
+GerenciadorArquivo <.. Main : usa
 
 IDestrutivel <|.. Personagem
 
@@ -448,6 +499,7 @@ PowerUp <|-- PowerUpBomba
 PowerUp <|-- PowerUpRaio
 
 Ranking <.. GerenciadorArquivo : usa
+Ranking <.. Main : usa
 Ranking *-- "0..*" RegistroRanking
 
 Tabuleiro *-- "*" Celula
