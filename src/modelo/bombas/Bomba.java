@@ -13,7 +13,7 @@ public class Bomba extends ElementoMapa {
     private int tempoRestante;
     private int tempoTotal;
 
-    Bomba(Posicao posicao, Jogador dono, Jogo jogo, int raio, int tempoRestante, int tempoTotal) {
+    public Bomba(Posicao posicao, Jogador dono, Jogo jogo, int raio, int tempoRestante, int tempoTotal) {
         super(posicao);
         this.dono = dono;
         this.jogo = jogo;
@@ -28,6 +28,10 @@ public class Bomba extends ElementoMapa {
         return explosao;
     }
 
+    public Jogador getDono() {
+        return dono;
+    }
+
     public char getSimbolo(){
         return 'B';
     }
@@ -38,5 +42,11 @@ public class Bomba extends ElementoMapa {
 
     public boolean naMetadeInicial() {
         return this.tempoRestante >= this.tempoTotal / 2;
+    }
+
+    public void tickar() {
+        if (tempoRestante > 0) {
+            tempoRestante--;
+        }
     }
 }

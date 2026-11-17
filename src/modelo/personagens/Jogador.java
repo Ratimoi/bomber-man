@@ -2,6 +2,7 @@ package modelo.personagens;
 
 import excecoes.LimiteBombaException;
 import modelo.Posicao;
+import modelo.Tabuleiro;
 
 public class Jogador extends Personagem {
     private int bombasAtivas;
@@ -11,7 +12,7 @@ public class Jogador extends Personagem {
     private int raioExplosao;
     private int vidas;
 
-    Jogador(Posicao posicao, String nome) {
+    public Jogador(Posicao posicao, String nome) {
         super(posicao);
         bombasAtivas = 0;
         maxBombas = 1;
@@ -37,6 +38,14 @@ public class Jogador extends Personagem {
         return 'P';
     }
 
+    public int getRaioExplosao() {
+        return raioExplosao;
+    }
+
+    public int getVidas() {
+        return vidas;
+    }
+
     public void liberarBomba() {
         bombasAtivas--;
     }
@@ -50,5 +59,13 @@ public class Jogador extends Personagem {
             throw new LimiteBombaException();
         }
         bombasAtivas++;
+    }
+
+    @Override
+    public void receberDano(Tabuleiro tab) {
+        perdeVida();
+        if (vidas <= 0) {
+            vivo = false;
+        }
     }
 }

@@ -8,7 +8,7 @@ import modelo.Tabuleiro;
 import modelo.personagens.Jogador;
 
 public class InimigoComum extends Inimigo {
-    InimigoComum(Posicao posicao) {
+    public InimigoComum(Posicao posicao) {
         super(posicao, 5, 1);
     }
 

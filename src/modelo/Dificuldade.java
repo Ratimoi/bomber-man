@@ -16,4 +16,8 @@ public enum Dificuldade {
     public boolean temSabotador() {
         return this != FACIL;
     }
+
+    public int getQuantidadeInimigos() {
+        return quantidadeInimigos;
+    }
 }

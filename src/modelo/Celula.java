@@ -25,6 +25,10 @@ public class Celula {
         return bomba;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
     public char getSimbolo() {
         if (bloco != null) {
             return bloco.getSimbolo();
@@ -51,6 +55,10 @@ public class Celula {
 
     public void setBloco(Bloco bloco) {
         this.bloco = bloco;
+    }
+
+    public void setBomba(Bomba bomba) {
+        this.bomba = bomba;
     }
 
     public void setItem(Item item) {

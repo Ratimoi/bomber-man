@@ -16,6 +16,10 @@ public class PortaSaida extends Item {
         aberta = true;
     }
 
+    public boolean isAberta() {
+        return aberta;
+    }
+
     @Override
     public void coletar(Jogador j, Jogo jogo) {
         if (jogo.todosInimigosDerrotados()) {
