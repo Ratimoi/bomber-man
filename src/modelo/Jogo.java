@@ -133,10 +133,19 @@ public class Jogo {
 
     public void imprimir() {
         int tamanho = this.tabuleiro.getTamanho();
+        StringBuilder cabecalho = new StringBuilder("  ");
+
+        for (int coluna = 0; coluna < tamanho; coluna++) {
+            cabecalho.append(String.format("%2d ", coluna));
+        }
+
+        System.out.println(cabecalho);
 
         for (int linha = 0; linha < tamanho; linha++) {
+            System.out.print((char) ('A' + linha) + " ");
+
             for (int coluna = 0; coluna < tamanho; coluna++) {
-                System.out.print(getSimboloNaPosicao(new Posicao(coluna, linha)));
+                System.out.print(" " + getSimboloNaPosicao(new Posicao(coluna, linha)) + " ");
             }
             System.out.println();
         }
