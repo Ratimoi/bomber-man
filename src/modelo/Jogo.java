@@ -9,25 +9,33 @@ import excecoes.ArquivoException;
 import excecoes.LimiteBombaException;
 import excecoes.MovimentoInvalidoException;
 import modelo.bombas.Bomba;
+import modelo.bombas.BombaArmadilha;
 import modelo.bombas.Explosao;
 import modelo.inimigos.Inimigo;
 import modelo.itens.Item;
 import modelo.itens.PortaSaida;
+import modelo.itens.PowerUpBomba;
+import modelo.itens.PowerUpRaio;
 import modelo.personagens.Jogador;
 import persistencia.GeradorMapa;
 
 public class Jogo {
     private static final int TAMANHO_PADRAO = 11;
+    private static final int TEMPO_BOMBA = 5;
 
+    private Bomba bombaPlantadaNoTurno;
     private Bomba[] bombas;
     private int dicasRestantes;
     private Dificuldade dificuldade;
     private EstadoJogo estado;
+    private List<Posicao> fogo = new ArrayList<>();
     private long inicioMs;
     private Inimigo[] inimigos;
     private Jogador jogador;
+    private List<String> mensagens = new ArrayList<>();
     private boolean modoDebug;
     private String nomeJogador;
+    private boolean reinicioPendente;
     private long semente;
     private Tabuleiro tabuleiro;
     private long tempoAnteriorMs;
@@ -62,8 +70,24 @@ public class Jogo {
         return inimigos.clone();
     }
 
+    public int getInimigosRestantes() {
+        int vivos = 0;
+
+        for (Inimigo inimigo : inimigos) {
+            if (!inimigo.isDestruido()) {
+                vivos++;
+            }
+        }
+
+        return vivos;
+    }
+
     public Jogador getJogador() {
         return jogador;
+    }
+
+    public List<String> getMensagens() {
+        return new ArrayList<>(mensagens);
     }
 
     public long getSemente() {
@@ -86,6 +110,10 @@ public class Jogo {
         return modoDebug;
     }
 
+    public boolean isReinicioPendente() {
+        return reinicioPendente;
+    }
+
     public void restaurar(Tabuleiro tabuleiro, Jogador jogador, List<Inimigo> inimigos, List<Bomba> bombas, int turno, int dicasRestantes, boolean modoDebug, long semente, long tempoSegundos) {
         this.tabuleiro = tabuleiro;
         this.jogador = jogador;
@@ -96,6 +124,9 @@ public class Jogo {
         this.modoDebug = modoDebug;
         this.semente = semente;
         this.estado = EstadoJogo.EM_ANDAMENTO;
+        this.reinicioPendente = false;
+        this.bombaPlantadaNoTurno = null;
+        limparTurno();
         this.tempoAnteriorMs = tempoSegundos * 1000;
         this.inicioMs = System.currentTimeMillis();
     }
@@ -112,6 +143,12 @@ public class Jogo {
     }
 
     private char getSimboloNaPosicao(Posicao posicao) {
+        for (Posicao emChamas : fogo) {
+            if (mesmaPosicao(emChamas, posicao)) {
+                return '+';
+            }
+        }
+
         if (!jogador.isDestruido() && mesmaPosicao(jogador.getPosicao(), posicao)) {
             return jogador.getSimbolo();
         }
@@ -132,15 +169,21 @@ public class Jogo {
             Celula celula = this.tabuleiro.getCelula(bomba.getPosicao());
 
             if (celula == null || celula.getBomba() != bomba) {
+                bomba.getDono().liberarBomba();
                 continue;
             }
 
-            bomba.tickar();
+            if (bomba != bombaPlantadaNoTurno) {
+                bomba.tickar();
+            }
 
             if (bomba.getTempoRestante() <= 0) {
                 Explosao explosao = bomba.explodir(this.tabuleiro);
-                this.tabuleiro.getCelula(bomba.getPosicao()).removerBomba();
+
+                celula.removerBomba();
                 bomba.getDono().liberarBomba();
+                mensagens.add("Uma bomba explodiu!");
+                fogo.addAll(explosao.getCelulasAtingidas());
                 aplicarDanoExplosao(explosao);
             } else {
                 restantes.add(bomba);
@@ -148,17 +191,19 @@ public class Jogo {
         }
 
         this.bombas = restantes.toArray(new Bomba[0]);
+        this.bombaPlantadaNoTurno = null;
     }
 
     private void aplicarDanoExplosao(Explosao explosao) {
         if (!jogador.isDestruido() && explosao.atinge(jogador.getPosicao())) {
-            jogador.receberDano(this.tabuleiro);
+            jogadorAtingido("Voce foi atingido pela explosao!");
         }
 
         for (Inimigo inimigo : inimigos) {
             if (!inimigo.isDestruido() && explosao.atinge(inimigo.getPosicao())) {
                 inimigo.receberDano(this.tabuleiro);
                 jogador.adicionarPontos(inimigo.getPontos());
+                mensagens.add("Inimigo derrotado! +" + inimigo.getPontos() + " pontos.");
             }
         }
     }
@@ -182,13 +227,63 @@ public class Jogo {
         if (item != null) {
             item.coletar(this.jogador, this);
 
+            if (item instanceof PowerUpBomba) {
+                mensagens.add("Power-up! Agora voce pode plantar mais uma bomba.");
+            } else if (item instanceof PowerUpRaio) {
+                mensagens.add("Power-up! O raio da explosao aumentou.");
+            } else if (item instanceof PortaSaida) {
+                mensagens.add(((PortaSaida) item).isAberta()
+                        ? "Voce escapou pela porta de saida!"
+                        : "A porta esta trancada: derrote todos os inimigos primeiro.");
+            }
+
             if (!(item instanceof PortaSaida) || ((PortaSaida) item).isAberta()) {
                 celula.setItem(null);
             }
         }
     }
 
+    private Direcao direcaoDe(char cmd) {
+        return switch (cmd) {
+            case 'N' -> Direcao.NORTE;
+            case 'S' -> Direcao.SUL;
+            case 'L' -> Direcao.LESTE;
+            case 'O' -> Direcao.OESTE;
+            default -> null;
+        };
+    }
+
+    private void detonarArmadilha(Celula celula, BombaArmadilha armadilha) {
+        Explosao explosao = armadilha.getBombaOriginal().explodir(this.tabuleiro);
+
+        celula.removerBloco();
+        mensagens.add("Era uma armadilha! Ela detonou.");
+        fogo.addAll(explosao.getCelulasAtingidas());
+        aplicarDanoExplosao(explosao);
+    }
+
+    private void jogadorAtingido(String motivo) {
+        if (reinicioPendente || jogador.isDestruido()) {
+            return;
+        }
+
+        jogador.receberDano(this.tabuleiro);
+
+        if (jogador.isDestruido()) {
+            mensagens.add(motivo + " Suas vidas acabaram.");
+        } else {
+            reinicioPendente = true;
+            mensagens.add(motivo + " Vidas restantes: " + jogador.getVidas() + ".");
+        }
+    }
+
+    private void limparTurno() {
+        fogo.clear();
+        mensagens.clear();
+    }
+
     public void esperar() {
+        limparTurno();
         avancarTurno();
     }
 
@@ -205,7 +300,10 @@ public class Jogo {
 
         this.inimigos = gerador.espalharInimigos(this.tabuleiro, dificuldade).toArray(new Inimigo[0]);
         this.bombas = new Bomba[0];
+        this.bombaPlantadaNoTurno = null;
+        this.reinicioPendente = false;
         this.turno = 0;
+        limparTurno();
     }
 
     private void comecar() {
@@ -231,13 +329,20 @@ public class Jogo {
         }
     }
 
-    public void moverJogador(Direcao dir) {
-        try {
-            jogador.mover(dir, this.tabuleiro);
-            coletarItemNaPosicao(jogador.getPosicao());
-        } catch (MovimentoInvalidoException ignored) {
+    public void moverJogador(Direcao dir) throws MovimentoInvalidoException {
+        Posicao atual = jogador.getPosicao();
+        Posicao destino = new Posicao(atual.getColuna() + dir.getdColuna(), atual.getLinha() + dir.getdLinha());
+        Celula celulaDestino = this.tabuleiro.getCelula(destino);
 
+        if (celulaDestino != null && celulaDestino.getBloco() instanceof BombaArmadilha) {
+            limparTurno();
+            detonarArmadilha(celulaDestino, (BombaArmadilha) celulaDestino.getBloco());
+            return;
         }
+
+        jogador.mover(dir, this.tabuleiro);
+        limparTurno();
+        coletarItemNaPosicao(jogador.getPosicao());
     }
 
     public String pedirDica() {
@@ -250,29 +355,42 @@ public class Jogo {
     }
 
     public void plantarBomba() {
-        try {
-            jogador.plantarBomba();
-        } catch (LimiteBombaException e) {
+        Celula celula = this.tabuleiro.getCelula(jogador.getPosicao());
+
+        if (celula.getBomba() != null) {
+            mensagens.add("Ja existe uma bomba aqui.");
             return;
         }
 
-        Bomba bomba = new Bomba(jogador.getPosicao(), jogador, this, jogador.getRaioExplosao(), 3, 3);
-        this.tabuleiro.getCelula(jogador.getPosicao()).setBomba(bomba);
+        try {
+            jogador.plantarBomba();
+        } catch (LimiteBombaException e) {
+            mensagens.add("Limite de bombas atingido!");
+            return;
+        }
+
+        Bomba bomba = new Bomba(jogador.getPosicao(), jogador, this, jogador.getRaioExplosao(), TEMPO_BOMBA, TEMPO_BOMBA);
+        celula.setBomba(bomba);
 
         Bomba[] novas = Arrays.copyOf(bombas, bombas.length + 1);
         novas[bombas.length] = bomba;
         this.bombas = novas;
+        this.bombaPlantadaNoTurno = bomba;
+        mensagens.add("Bomba plantada! Ela explode em " + TEMPO_BOMBA + " turnos.");
     }
 
-    public void processarTurno(char cmd) {
-        switch (cmd) {
-            case 'N' -> moverJogador(Direcao.NORTE);
-            case 'S' -> moverJogador(Direcao.SUL);
-            case 'L' -> moverJogador(Direcao.LESTE);
-            case 'O' -> moverJogador(Direcao.OESTE);
-            case 'B' -> plantarBomba();
-            case 'D' -> pedirDica();
-            default -> {
+    public void processarTurno(char cmd) throws MovimentoInvalidoException {
+        Direcao dir = direcaoDe(cmd);
+
+        if (dir != null) {
+            moverJogador(dir);
+        } else {
+            limparTurno();
+
+            if (cmd == 'B') {
+                plantarBomba();
+            } else if (cmd == 'D') {
+                mensagens.add(pedirDica());
             }
         }
 
@@ -283,7 +401,9 @@ public class Jogo {
         montarFase();
 
         this.jogador.setPosicao(new Posicao(0, 0));
+        this.jogador.zerarBombasAtivas();
         this.estado = EstadoJogo.EM_ANDAMENTO;
+        mensagens.add("Fase reiniciada.");
     }
 
     public void reiniciarJogo() {
@@ -297,7 +417,7 @@ public class Jogo {
 
         for (Inimigo inimigo : inimigos) {
             if (!inimigo.isDestruido() && mesmaPosicao(inimigo.getPosicao(), jogador.getPosicao())) {
-                jogador.receberDano(this.tabuleiro);
+                jogadorAtingido("Um inimigo te pegou!");
                 return;
             }
         }

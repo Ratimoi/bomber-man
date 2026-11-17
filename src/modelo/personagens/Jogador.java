@@ -78,6 +78,10 @@ public class Jogador extends Personagem {
         vidas--;
     }
 
+    public void zerarBombasAtivas() {
+        bombasAtivas = 0;
+    }
+
     public void plantarBomba() throws LimiteBombaException {
         if (bombasAtivas >= maxBombas) {
             throw new LimiteBombaException();

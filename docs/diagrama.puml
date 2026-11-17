@@ -11,6 +11,16 @@ class Main {
     + {static} main(args: String[]): void
 }
 
+class Tela {
+    + {static} cabecalho(titulo: String): void
+    + {static} comandos(): void
+    + {static} escolher(scanner: Scanner, titulo: String, texto: String, opcoes: String[]): int
+    + {static} legenda(): void
+    + {static} limpar(): void
+    + {static} pausar(scanner: Scanner, texto: String): void
+    + {static} separador(): void
+}
+
 package excecoes {
     exception ArquivoException
 
@@ -231,6 +241,7 @@ package modelo {
             + getRaioExplosao(): int
             + getSimbolo(): char
             + getVidas(): int
+            + zerarBombasAtivas(): void
             + liberarBomba(): void
             + perdeVida(): void
             + plantarBomba(): void
@@ -296,15 +307,19 @@ package modelo {
     }
 
     class Jogo {
+        - bombaPlantadaNoTurno: Bomba
         - bombas: Bomba[]
         - dicasRestantes: int
         - dificuldade: Dificuldade
         - estado: EstadoJogo
+        - fogo: List<Posicao>
         - inicioMs: long
         - inimigos: Inimigo[]
         - jogador: Jogador
+        - mensagens: List<String>
         - modoDebug: boolean
         - nomeJogador: String
+        - reinicioPendente: boolean
         - semente: long
         - tabuleiro: Tabuleiro
         - tempoAnteriorMs: long
@@ -318,7 +333,9 @@ package modelo {
         + getDificuldade(): Dificuldade
         + getEstado(): EstadoJogo
         + getInimigos(): Inimigo[]
+        + getInimigosRestantes(): int
         + getJogador(): Jogador
+        + getMensagens(): List<String>
         + getSemente(): long
         + getTabuleiro(): Tabuleiro
         + getTempoSegundos(): long
@@ -326,6 +343,7 @@ package modelo {
         + imprimir(): void
         + iniciar(): void
         + isModoDebug(): boolean
+        + isReinicioPendente(): boolean
         + moverInimigos(): void
         + moverJogador(dir: Direcao): void
         + pedirDica(): String
@@ -449,6 +467,7 @@ GeradorMapa ..> Inimigo : cria
 
 GerenciadorArquivo ..> Jogo : salva e carrega
 GerenciadorArquivo <.. Main : usa
+Tela <.. Main : usa
 
 IDestrutivel <|.. Personagem
 

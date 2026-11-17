@@ -2,9 +2,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import excecoes.ArquivoException;
+import excecoes.MovimentoInvalidoException;
 import modelo.Dificuldade;
 import modelo.EstadoJogo;
 import modelo.Jogo;
+import modelo.bombas.Bomba;
 import modelo.personagens.Jogador;
 import persistencia.GerenciadorArquivo;
 import persistencia.Ranking;
@@ -18,66 +20,53 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         GerenciadorArquivo arquivos = new GerenciadorArquivo();
-
-        System.out.println("Bem-vindo ao Bomberman!");
-
         boolean sair = false;
 
         while (!sair) {
-            System.out.println();
-            System.out.println("1 - Jogar");
-            System.out.println("2 - Ranking");
-            System.out.println("3 - Sair");
-            System.out.print("> ");
+            int opcao = Tela.escolher(scanner, "BOMBERMAN",
+                    "Bem-vindo! Destrua os caixotes, derrote todos os\ninimigos e encontre a porta de saida.",
+                    "Jogar", "Ranking", "Sair");
 
-            switch (scanner.nextLine().trim()) {
-                case "1":
+            switch (opcao) {
+                case 1:
                     menuJogar(scanner, arquivos);
                     break;
-                case "2":
-                    mostrarRanking(arquivos);
-                    break;
-                case "3":
-                    sair = true;
+                case 2:
+                    mostrarRanking(scanner, arquivos);
                     break;
                 default:
-                    System.out.println("Opcao invalida.");
+                    sair = true;
                     break;
             }
         }
 
+        Tela.limpar();
+        System.out.println("Ate a proxima!");
         scanner.close();
     }
 
     private static void menuJogar(Scanner scanner, GerenciadorArquivo arquivos) {
-        System.out.println();
-        System.out.println("1 - Novo jogo");
-        System.out.println("2 - Carregar jogo salvo");
-        System.out.println("3 - Voltar");
-        System.out.print("> ");
+        int opcao = Tela.escolher(scanner, "JOGAR", null, "Novo jogo", "Carregar jogo salvo", "Voltar");
 
-        switch (scanner.nextLine().trim()) {
-            case "1":
-                System.out.print("Digite seu nome: ");
-                String nome = scanner.nextLine().trim();
-                Dificuldade dificuldade = escolherDificuldade(scanner);
-                Jogo novo = new Jogo(dificuldade, nome.isEmpty() ? "Jogador" : nome);
+        if (opcao == 1) {
+            Tela.limpar();
+            Tela.cabecalho("NOVO JOGO");
+            System.out.println();
+            System.out.print("Digite seu nome: ");
+            String nome = scanner.nextLine().trim();
 
-                novo.iniciar();
-                jogar(scanner, arquivos, novo);
-                break;
-            case "2":
-                try {
-                    jogar(scanner, arquivos, arquivos.carregarJogo(GerenciadorArquivo.CAMINHO_SAVE));
-                } catch (ArquivoException e) {
-                    System.out.println(e.getMessage().trim());
-                }
-                break;
-            case "3":
-                break;
-            default:
-                System.out.println("Opcao invalida.");
-                break;
+            int nivel = Tela.escolher(scanner, "DIFICULDADE", "O nivel facil nao tem inimigo sabotador.", "Facil", "Medio", "Dificil");
+            Dificuldade dificuldade = Dificuldade.values()[nivel - 1];
+
+            Jogo jogo = new Jogo(dificuldade, nome.isEmpty() ? "Jogador" : nome);
+            jogo.iniciar();
+            jogar(scanner, arquivos, jogo);
+        } else if (opcao == 2) {
+            try {
+                jogar(scanner, arquivos, arquivos.carregarJogo(GerenciadorArquivo.CAMINHO_SAVE));
+            } catch (ArquivoException e) {
+                mostrarErro(scanner, e);
+            }
         }
     }
 
@@ -92,7 +81,10 @@ public class Main {
             if (saida == Saida.FIM_DE_JOGO) {
                 registrarNoRanking(arquivos, jogo);
 
-                if (perguntarFimDeJogo(scanner) == Saida.MENU) {
+                String resultado = jogo.getEstado() == EstadoJogo.VITORIA ? "VITORIA!" : "GAME OVER";
+                String resumo = resultado + "\nPontos: " + jogo.getJogador().getPontuacao() + " | Tempo: " + jogo.getTempoSegundos() + "s";
+
+                if (Tela.escolher(scanner, "FIM DE JOGO", resumo, "Reiniciar Jogo", "Novo Jogo") == 2) {
                     return;
                 }
             }
@@ -102,11 +94,21 @@ public class Main {
     }
 
     private static Saida rodarPartida(Scanner scanner, GerenciadorArquivo arquivos, Jogo jogo) {
-        while (!jogo.verificarFimJogo()) {
-            imprimirTela(jogo);
-            System.out.print("Comando (W/A/S/D mover, B bomba, H dica, E esperar, Q sair): ");
+        String aviso = null;
 
+        while (!jogo.verificarFimJogo()) {
+            imprimirTela(jogo, aviso);
+            aviso = null;
+
+            if (jogo.isReinicioPendente()) {
+                Tela.pausar(scanner, "Pressione ENTER para reiniciar a fase...");
+                jogo.reiniciarFase();
+                continue;
+            }
+
+            System.out.print("Comando: ");
             String entrada = scanner.nextLine().trim().toUpperCase();
+
             if (entrada.isEmpty()) {
                 continue;
             }
@@ -120,87 +122,83 @@ public class Main {
                     }
                     break;
                 case 'W':
-                    jogo.processarTurno('N');
+                    aviso = executar(jogo, 'N');
                     break;
                 case 'A':
-                    jogo.processarTurno('O');
+                    aviso = executar(jogo, 'O');
                     break;
                 case 'S':
-                    jogo.processarTurno('S');
+                    aviso = executar(jogo, 'S');
                     break;
                 case 'D':
-                    jogo.processarTurno('L');
+                    aviso = executar(jogo, 'L');
                     break;
                 case 'B':
-                    jogo.processarTurno('B');
+                    aviso = executar(jogo, 'B');
                     break;
                 case 'H':
-                    System.out.println(jogo.pedirDica());
+                    aviso = jogo.pedirDica();
                     break;
                 case 'E':
                     jogo.esperar();
                     break;
                 default:
-                    System.out.println("Comando invalido.");
+                    aviso = "Comando invalido.";
                     break;
             }
         }
 
-        imprimirTela(jogo);
-
-        if (jogo.getEstado() == EstadoJogo.VITORIA) {
-            System.out.println("Parabens, voce venceu!");
-        } else {
-            System.out.println("Game over.");
-        }
+        imprimirTela(jogo, null);
+        System.out.println();
+        System.out.println(jogo.getEstado() == EstadoJogo.VITORIA ? "*** VOCE VENCEU! ***" : "*** GAME OVER ***");
+        Tela.pausar(scanner, "Pressione ENTER para continuar...");
 
         return Saida.FIM_DE_JOGO;
     }
 
-    private static Saida menuSair(Scanner scanner, GerenciadorArquivo arquivos, Jogo jogo) {
-        System.out.println();
-        System.out.println("1 - Salvar jogo e voltar ao menu");
-        System.out.println("2 - Reiniciar jogo");
-        System.out.println("3 - Novo jogo (volta ao menu sem salvar)");
-        System.out.println("4 - Continuar jogando");
-        System.out.print("> ");
+    private static String executar(Jogo jogo, char comando) {
+        try {
+            jogo.processarTurno(comando);
+            return null;
+        } catch (MovimentoInvalidoException e) {
+            return "Movimento invalido: ha uma parede ou o limite do mapa. Tente outra direcao.";
+        }
+    }
 
-        switch (scanner.nextLine().trim()) {
-            case "1":
+    private static Saida menuSair(Scanner scanner, GerenciadorArquivo arquivos, Jogo jogo) {
+        int opcao = Tela.escolher(scanner, "PAUSA", null,
+                "Salvar jogo e voltar ao menu",
+                "Reiniciar jogo",
+                "Novo jogo (volta ao menu sem salvar)",
+                "Continuar jogando");
+
+        switch (opcao) {
+            case 1:
                 try {
                     arquivos.salvarJogo(jogo, GerenciadorArquivo.CAMINHO_SAVE);
-                    System.out.println("Jogo salvo.");
+                    Tela.limpar();
+                    Tela.cabecalho("JOGO SALVO");
+                    Tela.pausar(scanner, "Jogo salvo em " + GerenciadorArquivo.CAMINHO_SAVE + ". Pressione ENTER...");
                     return Saida.MENU;
                 } catch (ArquivoException e) {
-                    System.out.println(e.getMessage().trim());
+                    mostrarErro(scanner, e);
                     return null;
                 }
-            case "2":
+            case 2:
                 return Saida.REINICIAR;
-            case "3":
+            case 3:
                 return Saida.MENU;
             default:
                 return null;
         }
     }
 
-    private static Saida perguntarFimDeJogo(Scanner scanner) {
-        while (true) {
-            System.out.println();
-            System.out.println("1 - Reiniciar Jogo");
-            System.out.println("2 - Novo Jogo");
-            System.out.print("> ");
-
-            switch (scanner.nextLine().trim()) {
-                case "1":
-                    return Saida.REINICIAR;
-                case "2":
-                    return Saida.MENU;
-                default:
-                    System.out.println("Opcao invalida.");
-                    break;
-            }
-        }
+    private static void mostrarErro(Scanner scanner, ArquivoException e) {
+        Tela.limpar();
+        Tela.cabecalho("ERRO");
+        System.out.println();
+        System.out.println(e.getMessage().trim());
+        Tela.pausar(scanner, "Pressione ENTER para voltar...");
     }
 
     private static void registrarNoRanking(GerenciadorArquivo arquivos, Jogo jogo) {
@@ -209,7 +207,6 @@ public class Main {
         try {
             ranking = arquivos.carregarRanking();
         } catch (ArquivoException e) {
-            System.out.println(e.getMessage().trim());
             ranking = new Ranking();
         }
 
@@ -224,60 +221,72 @@ public class Main {
         }
     }
 
-    private static void mostrarRanking(GerenciadorArquivo arquivos) {
+    private static void mostrarRanking(Scanner scanner, GerenciadorArquivo arquivos) {
+        Tela.limpar();
+        Tela.cabecalho("RANKING - TOP 10");
+        System.out.println();
+
         try {
             ArrayList<RegistroRanking> top10 = arquivos.carregarRanking().getTop10();
 
-            System.out.println();
-            System.out.println("=== RANKING (Top 10) ===");
-
             if (top10.isEmpty()) {
-                System.out.println("Nenhum registro ainda.");
+                System.out.println("Nenhum registro ainda. Jogue uma partida!");
             }
 
             for (int i = 0; i < top10.size(); i++) {
-                System.out.println((i + 1) + ". " + top10.get(i));
+                System.out.println(String.format("%2d. ", i + 1) + top10.get(i));
             }
         } catch (ArquivoException e) {
             System.out.println(e.getMessage().trim());
         }
+
+        Tela.pausar(scanner, "Pressione ENTER para voltar...");
     }
 
-    private static void imprimirTela(Jogo jogo) {
+    private static void imprimirTela(Jogo jogo, String aviso) {
         Jogador jogador = jogo.getJogador();
 
-        System.out.println();
-        System.out.println();
-        System.out.println("=".repeat(30));
+        Tela.limpar();
+        Tela.cabecalho("BOMBERMAN | " + jogador.getNome() + " | " + jogo.getDificuldade());
         jogo.imprimir();
+        Tela.separador();
         System.out.println("Vidas: " + jogador.getVidas()
                 + " | Bombas: " + jogador.getBombasAtivas() + "/" + jogador.getMaxBombas()
                 + " | Raio: " + jogador.getRaioExplosao()
                 + " | Pontos: " + jogador.getPontuacao()
                 + " | Dicas: " + jogo.getDicasRestantes());
+        System.out.println("Turno: " + jogo.getTurno()
+                + " | Tempo: " + jogo.getTempoSegundos() + "s"
+                + " | Inimigos: " + jogo.getInimigosRestantes()
+                + " | Explosao em: " + temposDasBombas(jogo));
+        Tela.separador();
+
+        for (String mensagem : jogo.getMensagens()) {
+            System.out.println("> " + mensagem);
+        }
+
+        if (aviso != null) {
+            System.out.println("> " + aviso);
+        }
+
+        System.out.println();
+        Tela.legenda();
+        Tela.comandos();
     }
 
-    private static Dificuldade escolherDificuldade(Scanner scanner) {
-        System.out.println("Escolha a dificuldade:");
-        System.out.println("1 - Facil");
-        System.out.println("2 - Medio");
-        System.out.println("3 - Dificil");
+    private static String temposDasBombas(Jogo jogo) {
+        Bomba[] bombas = jogo.getBombas();
 
-        while (true) {
-            System.out.print("> ");
-            String entrada = scanner.nextLine().trim();
-
-            switch (entrada) {
-                case "1":
-                    return Dificuldade.FACIL;
-                case "2":
-                    return Dificuldade.MEDIO;
-                case "3":
-                    return Dificuldade.DIFICIL;
-                default:
-                    System.out.println("Opcao invalida.");
-                    break;
-            }
+        if (bombas.length == 0) {
+            return "-";
         }
+
+        StringBuilder tempos = new StringBuilder();
+
+        for (int i = 0; i < bombas.length; i++) {
+            tempos.append(i == 0 ? "" : ", ").append(bombas[i].getTempoRestante());
+        }
+
+        return tempos + " turno(s)";
     }
 }
