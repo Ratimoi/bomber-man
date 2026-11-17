@@ -25,12 +25,41 @@ public class Jogo {
     private Tabuleiro tabuleiro;
     private int turno;
 
-    Jogo(Dificuldade dificuldade) {
+    public Jogo(Dificuldade dificuldade) {
         this.dificuldade = dificuldade;
     }
 
     public void alternarDebug() {
         this.modoDebug = !this.modoDebug;
+    }
+
+    public EstadoJogo getEstado() {
+        return estado;
+    }
+
+    public void imprimir() {
+        int tamanho = this.tabuleiro.getTamanho();
+
+        for (int linha = 0; linha < tamanho; linha++) {
+            for (int coluna = 0; coluna < tamanho; coluna++) {
+                System.out.print(getSimboloNaPosicao(new Posicao(coluna, linha)));
+            }
+            System.out.println();
+        }
+    }
+
+    private char getSimboloNaPosicao(Posicao posicao) {
+        if (!jogador.isDestruido() && mesmaPosicao(jogador.getPosicao(), posicao)) {
+            return jogador.getSimbolo();
+        }
+
+        for (Inimigo inimigo : inimigos) {
+            if (!inimigo.isDestruido() && mesmaPosicao(inimigo.getPosicao(), posicao)) {
+                return inimigo.getSimbolo();
+            }
+        }
+
+        return this.tabuleiro.getCelula(posicao).getSimbolo();
     }
 
     public void atualizarBombas() {
