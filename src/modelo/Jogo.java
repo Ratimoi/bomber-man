@@ -7,6 +7,7 @@ import java.util.Random;
 
 import excecoes.ArquivoException;
 import excecoes.LimiteBombaException;
+import excecoes.LimiteDicaException;
 import excecoes.MovimentoInvalidoException;
 import modelo.blocos.BlocoDestrutivo;
 import modelo.bombas.Bomba;
@@ -194,7 +195,7 @@ public class Jogo {
             }
 
             if (bomba != bombaPlantadaNoTurno) {
-                bomba.tickar();
+                bomba.tick();
             }
 
             if (bomba.getTempoRestante() <= 0) {
@@ -366,9 +367,9 @@ public class Jogo {
         coletarItemNaPosicao(jogador.getPosicao());
     }
 
-    public String pedirDica() {
+    public String pedirDica() throws LimiteDicaException {
         if (dicasRestantes <= 0) {
-            return "Sem dicas restantes.";
+            throw new LimiteDicaException();
         }
 
         dicasRestantes--;
@@ -411,7 +412,11 @@ public class Jogo {
             if (cmd == 'B') {
                 plantarBomba();
             } else if (cmd == 'D') {
-                mensagens.add(pedirDica());
+                try {
+                    mensagens.add(pedirDica());
+                } catch (LimiteDicaException e) {
+                    mensagens.add("Sem dicas restantes.");
+                }
             }
         }
 

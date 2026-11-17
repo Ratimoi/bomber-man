@@ -1,12 +1,13 @@
 package modelo.bombas;
 
+import interfaces.ITemporizavel;
 import modelo.ElementoMapa;
 import modelo.Jogo;
 import modelo.Posicao;
 import modelo.Tabuleiro;
 import modelo.personagens.Jogador;
 
-public class Bomba extends ElementoMapa {
+public class Bomba extends ElementoMapa implements ITemporizavel {
     private Jogador dono;
     private Jogo jogo;
     private int raio;
@@ -40,6 +41,7 @@ public class Bomba extends ElementoMapa {
         return 'B';
     }
 
+    @Override
     public int getTempoRestante() {
         return tempoRestante;
     }
@@ -52,7 +54,8 @@ public class Bomba extends ElementoMapa {
         return this.tempoRestante >= this.tempoTotal / 2;
     }
 
-    public void tickar() {
+    @Override
+    public void tick() {
         if (tempoRestante > 0) {
             tempoRestante--;
         }

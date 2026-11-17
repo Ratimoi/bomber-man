@@ -125,7 +125,7 @@ package modelo {
             + getTempoRestante(): int
             + getTempoTotal(): int
             + naMetadeInicial(): boolean
-            + tickar(): void
+            + tick(): void
         }
 
         class BombaArmadilha {
@@ -442,6 +442,7 @@ Dificuldade "1" <-- Jogo
 
 ElementoMapa <|-down- Bloco
 ElementoMapa <|-- Bomba
+ITemporizavel <|.. Bomba
 ElementoMapa <|-- Item
 ElementoMapa <|-- Personagem
 ElementoMapa *-- "1" Posicao

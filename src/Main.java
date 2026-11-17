@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import excecoes.ArquivoException;
+import excecoes.LimiteDicaException;
 import excecoes.MovimentoInvalidoException;
 import modelo.Dificuldade;
 import modelo.EstadoJogo;
@@ -137,7 +138,11 @@ public class Main {
                     aviso = executar(jogo, 'B');
                     break;
                 case 'H':
-                    aviso = jogo.pedirDica();
+                    try {
+                        aviso = jogo.pedirDica();
+                    } catch (LimiteDicaException e) {
+                        aviso = "Sem dicas restantes.";
+                    }
                     break;
                 case 'E':
                     jogo.esperar();
