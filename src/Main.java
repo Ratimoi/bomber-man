@@ -142,6 +142,12 @@ public class Main {
                 case 'E':
                     jogo.esperar();
                     break;
+                case 'X':
+                    jogo.alternarDebug();
+                    aviso = jogo.isModoDebug()
+                            ? "DEBUG ligado: power-ups e a porta aparecem sob os caixotes."
+                            : "DEBUG desligado.";
+                    break;
                 default:
                     aviso = "Comando invalido.";
                     break;
@@ -247,7 +253,7 @@ public class Main {
         Jogador jogador = jogo.getJogador();
 
         Tela.limpar();
-        Tela.cabecalho("BOMBERMAN | " + jogador.getNome() + " | " + jogo.getDificuldade());
+        Tela.cabecalho("BOMBERMAN | " + jogador.getNome() + " | " + jogo.getDificuldade() + (jogo.isModoDebug() ? " | DEBUG" : ""));
         jogo.imprimir();
         Tela.separador();
         System.out.println("Vidas: " + jogador.getVidas()

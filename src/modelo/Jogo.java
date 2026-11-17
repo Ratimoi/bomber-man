@@ -8,6 +8,7 @@ import java.util.Random;
 import excecoes.ArquivoException;
 import excecoes.LimiteBombaException;
 import excecoes.MovimentoInvalidoException;
+import modelo.blocos.BlocoDestrutivo;
 import modelo.bombas.Bomba;
 import modelo.bombas.BombaArmadilha;
 import modelo.bombas.Explosao;
@@ -168,7 +169,17 @@ public class Jogo {
             }
         }
 
-        return this.tabuleiro.getCelula(posicao).getSimbolo();
+        Celula celula = this.tabuleiro.getCelula(posicao);
+
+        if (modoDebug && celula.getBloco() instanceof BlocoDestrutivo) {
+            Item oculto = ((BlocoDestrutivo) celula.getBloco()).getItemOculto();
+
+            if (oculto != null) {
+                return oculto.getSimbolo();
+            }
+        }
+
+        return celula.getSimbolo();
     }
 
     public void atualizarBombas() {

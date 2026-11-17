@@ -47,7 +47,7 @@ public class Tela {
 
     public static void comandos() {
         System.out.println("Comandos:  [W] cima   [A] esquerda   [S] baixo   [D] direita");
-        System.out.println("           [B] plantar bomba   [H] dica   [E] esperar   [Q] sair");
+        System.out.println("           [B] plantar bomba   [H] dica   [E] esperar   [X] debug   [Q] sair");
     }
 
     public static int escolher(Scanner scanner, String titulo, String texto, String... opcoes) {
