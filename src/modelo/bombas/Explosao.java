@@ -59,9 +59,10 @@ public class Explosao {
 
                 if (bloco instanceof BombaArmadilha) {
                     BombaArmadilha armadilha = (BombaArmadilha) bloco;
+                    celula.removerBloco();
+
                     Explosao explosaoEmCadeia = armadilha.getBombaOriginal().explodir(tab);
 
-                    celula.removerBloco();
                     celulasAtingidas.add(posicaoAtual);
                     celulasAtingidas.addAll(explosaoEmCadeia.getCelulasAtingidas());
                     break;

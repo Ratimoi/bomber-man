@@ -274,9 +274,10 @@ public class Jogo {
     }
 
     private void detonarArmadilha(Celula celula, BombaArmadilha armadilha) {
+        celula.removerBloco();
+
         Explosao explosao = armadilha.getBombaOriginal().explodir(this.tabuleiro);
 
-        celula.removerBloco();
         mensagens.add("Era uma armadilha! Ela detonou.");
         fogo.addAll(explosao.getCelulasAtingidas());
         aplicarDanoExplosao(explosao);
