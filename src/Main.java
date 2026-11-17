@@ -24,7 +24,7 @@ public class Main {
 
         while (!sair) {
             int opcao = Tela.escolher(scanner, "BOMBERMAN",
-                    "Bem-vindo! Destrua os caixotes, derrote todos os\ninimigos e encontre a porta de saida.",
+                    "Bem-vindo! Destrua os caixotes, derrote todos os\ninimigos e encontre a porta de saída.",
                     "Jogar", "Ranking", "Sair");
 
             switch (opcao) {

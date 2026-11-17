@@ -19,7 +19,11 @@ public class InimigoSabotador extends Inimigo {
     public void agir(Tabuleiro tab, Jogador j) {
         Bomba bombaEncontrada = procurarBomba(tab);
 
-        if (bombaEncontrada != null) {
+        boolean sobreJogador = bombaEncontrada != null
+                && bombaEncontrada.getPosicao().getLinha() == j.getPosicao().getLinha()
+                && bombaEncontrada.getPosicao().getColuna() == j.getPosicao().getColuna();
+
+        if (bombaEncontrada != null && !sobreJogador) {
             BombaArmadilha armadilha = desarmar(bombaEncontrada);
 
             if (armadilha != null) {
